@@ -14,6 +14,50 @@ csv loader made by Marcelino
 class Loader {
 private:
     // implement utility functions here
+
+    // trim whitespace
+    std::string trim(const std::string& str) {
+        size_t start = str.find_first_not_of(" \t\n\r");
+        size_t end = str.find_last_not_of(" \t\n\r");
+        return (start == std::string::npos) ? "" : str.substr(start, end - start + 1);
+    }
+
+    // convert rent string to int, numeric only
+    int rentToInt(const std::string& str) {
+        std::string num_str;
+        for(char ch : str) {
+            if(std::isdigit(ch)) {
+                num_str += ch;
+            }
+        }
+        return std::stoi(num_str);
+    }
+
+    // parse csv string into array of strings
+    std::string* parseArray(const std::string& str, int& count) {
+        std::stringstream ss(str);
+        std::string item;
+        count = 0;
+
+        // get number of items
+        while (std::getline(ss, item, ',')) {
+            count++;
+        }
+
+        // allocate array and reset
+        std::string* arr = new std::string[count];
+        ss.clear();
+        ss.seekg(0, std::ios::beg);
+
+        // fill the array
+        int i = 0;
+        while(std::getline(ss, item, ',')) {
+            arr[i++] = trim(item);
+        }
+
+        return arr;
+    }
+
     Property loadLine(const std::string& line) {
         // load id
         // load name
@@ -33,14 +77,14 @@ private:
         // return Property object 
     }
 
-public: 
-    // implement main loader here
-    Property loadCSV(const std::string filename, int &size) {
-        // get size of dataset first
-        // update size variable indirectly
+// public: 
+//     // implement main loader here
+//     Property loadCSV(const std::string filename, int &size) {
+//         // get size of dataset first
+//         // update size variable indirectly
 
-        // create properties array with size of dataset
-        // run loadline for each line, add to properties array
-        // return array
-    }
+//         // create properties array with size of dataset
+//         // run loadline for each line, add to properties array
+//         // return array
+//     }
 };
