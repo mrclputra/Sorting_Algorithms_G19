@@ -1,6 +1,15 @@
 #include <iostream>
 
+// function prototypes here
+void testPropertyClass();
+
 int main() {
-    std::cout << "Hello World" << std::endl;
+    int dataset_size;
+    std::string filename = "dataset.csv";
+
     return 0;
+}
+
+void testPropertyClass() {
+
 }
