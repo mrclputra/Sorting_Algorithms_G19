@@ -26,24 +26,12 @@ public:
     // constructor
     Property(int id, const std::string &name, int completion, int monthly_rent, const std::string &location, const std::string &type,
              int rooms, int parking, int bathrooms, int size, const std::string &furnished,
-             const std::string *facilities, int num_facilities,
-             const std::string *add_facilities, int num_add_facilities,
+             std::string *facilities, int num_facilities,
+             std::string *add_facilities, int num_add_facilities,
              const std::string &region) : id(id), name(name), completion(completion), monthly_rent(monthly_rent), location(location), type(type),
                                           rooms(rooms), parking(parking), bathrooms(bathrooms), size(size), furnished(furnished),
-                                          num_facilities(num_facilities), num_add_facilities(num_add_facilities), region(region)
-    {
-        // allocate and set facilities
-        this->facilities = new std::string[num_facilities];
-        for (int i = 0; i < num_facilities; i++) {
-            this->facilities[i] = facilities[i];
-        }
-
-        // allocate and set additional facilities
-        this->add_facilities = new std::string[num_add_facilities];
-        for (int i = 0; i < num_add_facilities; i++) {
-            this->add_facilities[i] = add_facilities[i];
-        }
-    }
+                                          facilities(facilities), add_facilities(add_facilities),
+                                          num_facilities(num_facilities), num_add_facilities(num_add_facilities), region(region) {}
 
     // deconstructor to free memory
     ~Property() {
