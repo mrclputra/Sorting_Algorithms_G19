@@ -13,7 +13,7 @@ csv loader made by Marcelino
 #include "property.h"
 
 class Loader {
-private:
+public:
     // trim whitespace
     std::string trim(const std::string& str) {
         size_t start = str.find_first_not_of(" \t\n\r");
@@ -46,21 +46,25 @@ private:
         std::string item;
         int count = 0;
 
-        // get number of items
-        while (std::getline(ss, item, ',')) {
+        // first pass, get number of items
+        while(std::getline(ss, item, ',')) {
             count++;
         }
 
-        // allocate array and reset
-        std::string* arr = new std::string[count];
+        // allocate array with extra slot for null terminator
+        std::string* arr = new std::string[count + 1];
+
+        // reset
         ss.clear();
         ss.seekg(0, std::ios::beg);
 
-        // fill the array
+        // second pass, fill array
         int i = 0;
         while(std::getline(ss, item, ',')) {
             arr[i++] = trim(item);
         }
+
+        arr[count] = "";
 
         return arr;
     }
@@ -86,7 +90,6 @@ public:
         // load rent, take only numbers, convert into int
         std::getline(ss, item, ',');
         property.setRentPerMonth(item.empty() ? 0 : getNumeric(trim(item)));
-        std::cout << getNumeric(trim(item)) << std::endl;
 
         // load location
         std::getline(ss, item, ',');
@@ -120,9 +123,11 @@ public:
         property.setFacilities(parseArray(extractQuotedString(ss)));
 
         // load additional facilities, load as a string array
-        property.setFacilities(parseArray(extractQuotedString(ss)));
+        property.setAdditionalFacilities(parseArray(extractQuotedString(ss)));
 
-        // load region
+        std::cout << trim(item) << std::endl;
+
+        // load region, broken?
         std::getline(ss, item, ',');
         property.setRegion(trim(item));
         
@@ -130,7 +135,6 @@ public:
         return property;
     }
 
-public: 
     // implement main loader here
     // Property loadCSV(const std::string filename, int &size) {
     //     // get size of dataset first

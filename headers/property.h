@@ -17,24 +17,21 @@ private:
     int size;
     std::string furnished;
     std::string* facilities;
-    int num_facilities;
     std::string* add_facilities;
-    int num_add_facilities;
     std::string region;
 
 public:
-    // constructor
+    // standard constructor
     Property(int id, const std::string &name, int completion, int monthly_rent, const std::string &location, const std::string &type,
              int rooms, int parking, int bathrooms, int size, const std::string &furnished,
              std::string *facilities, int num_facilities,
              std::string *add_facilities, int num_add_facilities,
              const std::string &region) : id(id), name(name), completion(completion), monthly_rent(monthly_rent), location(location), type(type),
                                           rooms(rooms), parking(parking), bathrooms(bathrooms), size(size), furnished(furnished),
-                                          facilities(facilities), add_facilities(add_facilities),
-                                          num_facilities(num_facilities), num_add_facilities(num_add_facilities), region(region) {}
+                                          facilities(facilities), add_facilities(add_facilities), region(region) {}
 
     // empty constructor
-    Property() : facilities(nullptr), add_facilities(nullptr), num_facilities(0), num_add_facilities(0) {}
+    Property() : facilities(nullptr), add_facilities(nullptr) {}
 
     // deconstructor to free memory
     ~Property() {
@@ -54,19 +51,14 @@ public:
     void setBathrooms(int bathrooms) { this->bathrooms = bathrooms; }
     void setSize(int size) { this->size = size; }
     void setFurnished(const std::string& furnished) { this->furnished = furnished; }
-    
     void setFacilities(std::string* facilities) {
-        delete[] this->facilities; // Clean up previous allocation
+        delete[] this->facilities; // clean up previous allocation
         this->facilities = facilities;
-        // this->num_facilities = count;
     }
-
     void setAdditionalFacilities(std::string* add_facilities) {
-        delete[] this->add_facilities; // Clean up previous allocation
+        delete[] this->add_facilities; // clean up previous allocation
         this->add_facilities = add_facilities;
-        // this->num_add_facilities = count;
     }
-
     void setRegion(const std::string& region) { this->region = region; }
 
     // getters
@@ -82,8 +74,6 @@ public:
     int getSize() const { return size; }
     std::string getFurnished() const { return furnished; }
     const std::string* getFacilities() const { return facilities; }
-    int getNumFacilities() const { return num_facilities; }
     const std::string* getAddFacilities() const { return add_facilities; }
-    int getNumAddFacilities() const { return num_add_facilities; }
     std::string getRegion() const { return region; }
 };
