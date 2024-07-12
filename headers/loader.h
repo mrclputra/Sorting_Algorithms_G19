@@ -13,8 +13,6 @@ csv loader made by Marcelino
 
 class Loader {
 private:
-    // implement utility functions here
-
     // trim whitespace
     std::string trim(const std::string& str) {
         size_t start = str.find_first_not_of(" \t\n\r");
@@ -59,6 +57,9 @@ private:
     }
 
     Property loadLine(const std::string& line) {
+        std::stringstream ss(line);
+        std::string item;
+
         // load id
         // load name
         // load completion, convert into int
@@ -77,14 +78,14 @@ private:
         // return Property object 
     }
 
-// public: 
-//     // implement main loader here
-//     Property loadCSV(const std::string filename, int &size) {
-//         // get size of dataset first
-//         // update size variable indirectly
+public: 
+    // implement main loader here
+    Property loadCSV(const std::string filename, int &size) {
+        // get size of dataset first
+        // update size variable indirectly
 
-//         // create properties array with size of dataset
-//         // run loadline for each line, add to properties array
-//         // return array
-//     }
+        // create properties array with size of dataset
+        // run loadline for each line, add to properties array
+        // return array
+    }
 };

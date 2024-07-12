@@ -32,6 +32,7 @@ private:
 
 };
 
+// replace with merge sort soon
 class Heap {
 public:
 	static void sort(Property* arr, int size) {
