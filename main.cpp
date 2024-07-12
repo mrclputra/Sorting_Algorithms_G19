@@ -68,7 +68,7 @@ void testLoadLine() {
     std::cout << "Property ID: " << property.getID() << std::endl;
     std::cout << "Name: " << property.getName() << std::endl;
     std::cout << "Completion Year: " << property.getCompletion() << std::endl;
-    std::cout << "Monthly Rent:" << property.getMonthlyRent() << std::endl;
+    std::cout << "Monthly Rent: " << property.getMonthlyRent() << std::endl;
     std::cout << "Location: " << property.getLocation() << std::endl;
     std::cout << "Type: " << property.getType() << std::endl;
     std::cout << "Rooms: " << property.getRooms() << std::endl;

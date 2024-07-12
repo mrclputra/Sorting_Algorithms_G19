@@ -35,8 +35,8 @@ public:
     // extract quotes strings
     std::string extractQuotedString(std::stringstream& ss) {
         std::string item;
-        std::getline(ss, item, '"'); // Skip the first quote
-        std::getline(ss, item, '"'); // Read until the next quote
+        std::getline(ss, item, '"'); // skip the first quote
+        std::getline(ss, item, '"'); // read until the next quote
         return trim(item);
     }
 
@@ -77,60 +77,77 @@ public:
 
         // load id
         std::getline(ss, item, ',');
+        std::cout << "ID read: " << item << std::endl;
         property.setId(item.empty() ? 0 : std::stoi(trim(item)));
 
         // load name
         std::getline(ss, item, ',');
+        std::cout << "Name read: " << item << std::endl;
         property.setName(trim(item));
 
         // load completion, convert into int
         std::getline(ss, item, ',');
+        std::cout << "Completion read: " << item << std::endl;
         property.setCompletion(item.empty() ? 0 : std::stoi(trim(item)));
 
         // load rent, take only numbers, convert into int
         std::getline(ss, item, ',');
+        std::cout << "Rent read: " << item << std::endl;
         property.setRentPerMonth(item.empty() ? 0 : getNumeric(trim(item)));
 
         // load location
         std::getline(ss, item, ',');
+        std::cout << "Location read: " << item << std::endl;
         property.setLocation(trim(item));
 
         // load type
         std::getline(ss, item, ',');
+        std::cout << "Type read: " << item << std::endl;
         property.setType(trim(item));
 
         // load rooms
         std::getline(ss, item, ',');
+        std::cout << "Rooms read: " << item << std::endl;
         property.setRooms(item.empty() ? 0 : std::stoi(trim(item)));
 
         // load parking, convert into int
         std::getline(ss, item, ',');
+        std::cout << "Parking read: " << item << std::endl;
         property.setParking(item.empty() ? 0 : std::stoi(trim(item)));
 
         // load bathrooms, convert into int
         std::getline(ss, item, ',');
+        std::cout << "Bathrooms read: " << item << std::endl;
         property.setBathrooms(item.empty() ? 0 : std::stoi(trim(item)));
 
         // load size, take numeric only, convert into int
         std::getline(ss, item, ',');
+        std::cout << "Size read: " << item << std::endl;
         property.setSize(item.empty() ? 0 : getNumeric(trim(item)));
 
         // load furnished
         std::getline(ss, item, ',');
+        std::cout << "Furnished read: " << item << std::endl;
         property.setFurnished(trim(item));
 
-        // load facilities, load as a string array
-        property.setFacilities(parseArray(extractQuotedString(ss)));
+        // load facilities
+        std::string facilities_str = extractQuotedString(ss);
+        std::cout << "Facilities read: " << facilities_str << std::endl;
+        property.setFacilities(parseArray(facilities_str));
 
-        // load additional facilities, load as a string array
-        property.setAdditionalFacilities(parseArray(extractQuotedString(ss)));
+        // load additional facilities
+        std::string add_facilities_str = extractQuotedString(ss);
+        std::cout << "Additional Facilities read: " << add_facilities_str << std::endl;
+        property.setAdditionalFacilities(parseArray(add_facilities_str));
 
-        std::cout << trim(item) << std::endl;
-
-        // load region, broken?
-        std::getline(ss, item, ',');
+        // load region
+        std::getline(ss, item, ','); // skip comma
+        std::getline(ss, item);
+        std::cout << "Region read: " << item << std::endl;
         property.setRegion(trim(item));
         
+        std::cout << std::endl;
+
         // return Property object 
         return property;
     }
