@@ -53,6 +53,7 @@
         "xutility": "cpp",
         "algorithm": "cpp",
         "optional": "cpp",
-        "vector": "cpp"
+        "vector": "cpp",
+        "regex": "cpp"
     }
 }

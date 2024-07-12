@@ -33,11 +33,41 @@ public:
                                           facilities(facilities), add_facilities(add_facilities),
                                           num_facilities(num_facilities), num_add_facilities(num_add_facilities), region(region) {}
 
+    // empty constructor
+    Property() : facilities(nullptr), add_facilities(nullptr), num_facilities(0), num_add_facilities(0) {}
+
     // deconstructor to free memory
     ~Property() {
         delete[] facilities;
         delete[] add_facilities;
     }
+
+    // setters
+    void setId(int id) { this->id = id; }
+    void setName(const std::string& name) { this->name = name; }
+    void setCompletion(int completion) { this->completion = completion; }
+    void setRentPerMonth(int monthly_rent) { this->monthly_rent = monthly_rent; }
+    void setLocation(const std::string& location) { this->location = location; }
+    void setType(const std::string& type) { this->type = type; }
+    void setRooms(int rooms) { this->rooms = rooms; }
+    void setParking(int parking) { this->parking = parking; }
+    void setBathrooms(int bathrooms) { this->bathrooms = bathrooms; }
+    void setSize(int size) { this->size = size; }
+    void setFurnished(const std::string& furnished) { this->furnished = furnished; }
+    
+    void setFacilities(std::string* facilities) {
+        delete[] this->facilities; // Clean up previous allocation
+        this->facilities = facilities;
+        // this->num_facilities = count;
+    }
+
+    void setAdditionalFacilities(std::string* add_facilities) {
+        delete[] this->add_facilities; // Clean up previous allocation
+        this->add_facilities = add_facilities;
+        // this->num_add_facilities = count;
+    }
+
+    void setRegion(const std::string& region) { this->region = region; }
 
     // getters
     int getID() const { return id; }
