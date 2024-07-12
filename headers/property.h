@@ -39,6 +39,38 @@ public:
         delete[] add_facilities;
     }
 
+    // display all details
+    void display() {
+        // modify this to work with empty values as well
+        std::cout << "Property ID: " << getID() << std::endl;
+        std::cout << "Name: " << getName() << std::endl;
+        std::cout << "Completion Year: " << getCompletion() << std::endl;
+        std::cout << "Monthly Rent: " << getMonthlyRent() << std::endl;
+        std::cout << "Location: " << getLocation() << std::endl;
+        std::cout << "Type: " << getType() << std::endl;
+        std::cout << "Rooms: " << getRooms() << std::endl;
+        std::cout << "Parking: " << getParking() << std::endl;
+        std::cout << "Bathrooms: " << getBathrooms() << std::endl;
+        std::cout << "Size: " << getSize() << std::endl;
+        std::cout << "Furnished: " << getFurnished() << std::endl;
+
+        // print facilities
+        std::cout << "Facilities: ";
+        for (int i = 0; facilities[i] != ""; ++i) {
+            std::cout << facilities[i] << (facilities[i + 1] != "" ? ", " : "");
+        }
+        std::cout << std::endl;
+
+        // print additional facilities
+        std::cout << "Additional Facilities: ";
+        for (int i = 0; add_facilities[i] != ""; ++i) {
+            std::cout << add_facilities[i] << (add_facilities[i + 1] != "" ? ", " : "");
+        }
+        std::cout << std::endl;
+
+        std::cout << "Region: " << getRegion() << std::endl;
+    }
+
     // setters
     void setId(int id) { this->id = id; }
     void setName(const std::string& name) { this->name = name; }

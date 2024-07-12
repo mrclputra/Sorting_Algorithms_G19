@@ -3,13 +3,29 @@
 // headers 
 #include "headers/property.h"
 #include "headers/loader.h"
+#include "headers/linkedlist.h"
 
 // function prototypes
 void testLoadLine();
 void testQuotedStringExtract();
 
 int main() {
-    testLoadLine();
+    LinkedList properties;
+
+    // create test property object
+    Property property_1;
+    property_1.setId(1);
+    property_1.setName("Property Test 1");
+    properties.append(property_1);
+
+    Property property_2;
+    property_2.setId(2);
+    property_2.setName("Property Test 2");
+    properties.append(property_2);
+
+    properties.printAll();
+
+    // testLoadLine();
     // testQuotedStringExtract();
     return 0;
 }
@@ -50,7 +66,6 @@ void testQuotedStringExtract() {
     delete[] additionalFacilities;
 
 }
-
 void testLoadLine() {
     // std::string csv_line = "100203973,Segar Courts,,RM 2 300 per month,Kuala Lumpur - Cheras,Condominium,3,1.0,2.0,1170 sq.ft.,Partially Furnished,"
     //                        "\"Playground, Parking, Barbeque area, Security, Jogging Track, Swimming Pool, Gymnasium, Lift, Sauna\","

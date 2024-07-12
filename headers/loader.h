@@ -154,6 +154,12 @@ public:
 
     // implement main loader here
     // Property loadCSV(const std::string filename, int &size) {
+    //     std::ifstream file(filename);
+    //     if(!file.is_open()) {
+    //         std::cerr << "Failed to open " << filename << std::endl;
+
+    //     }
+
     //     // get size of dataset first
     //     // update size variable indirectly
 
