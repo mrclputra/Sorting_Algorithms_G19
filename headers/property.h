@@ -34,14 +34,13 @@ public:
     Property() : facilities(nullptr), add_facilities(nullptr) {}
 
     // deconstructor to free memory
-    ~Property() {
-        delete[] facilities;
-        delete[] add_facilities;
-    }
+    // ~Property() {
+    //     delete[] facilities;
+    //     delete[] add_facilities;
+    // }
 
     // display all details
     void display() {
-        // modify this to work with empty values as well
         std::cout << "Property ID: " << getID() << std::endl;
         std::cout << "Name: " << getName() << std::endl;
         std::cout << "Completion Year: " << getCompletion() << std::endl;
@@ -56,15 +55,29 @@ public:
 
         // print facilities
         std::cout << "Facilities: ";
+        bool first = true;
         for (int i = 0; facilities[i] != ""; ++i) {
-            std::cout << facilities[i] << (facilities[i + 1] != "" ? ", " : "");
+            if (!facilities[i].empty()) {
+                if (!first) {
+                    std::cout << ", ";
+                }
+                std::cout << facilities[i];
+                first = false;
+            }
         }
         std::cout << std::endl;
 
         // print additional facilities
         std::cout << "Additional Facilities: ";
+        first = true;
         for (int i = 0; add_facilities[i] != ""; ++i) {
-            std::cout << add_facilities[i] << (add_facilities[i + 1] != "" ? ", " : "");
+            if (!add_facilities[i].empty()) {
+                if (!first) {
+                    std::cout << ", ";
+                }
+                std::cout << add_facilities[i];
+                first = false;
+            }
         }
         std::cout << std::endl;
 

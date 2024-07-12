@@ -10,23 +10,12 @@ void testLoadLine();
 void testQuotedStringExtract();
 
 int main() {
-    LinkedList properties;
+    Loader loader;
+    LinkedList<Property> properties;
 
-    // create test property object
-    Property property_1;
-    property_1.setId(1);
-    property_1.setName("Property Test 1");
-    properties.append(property_1);
-
-    Property property_2;
-    property_2.setId(2);
-    property_2.setName("Property Test 2");
-    properties.append(property_2);
-
-    properties.printAll();
-
-    // testLoadLine();
-    // testQuotedStringExtract();
+    loader.loadCSV("dataset.csv", properties);
+    properties.print();
+    
     return 0;
 }
 

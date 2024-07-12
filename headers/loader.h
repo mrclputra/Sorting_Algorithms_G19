@@ -11,6 +11,7 @@ csv loader made by Marcelino
 #include <regex>
 
 #include "property.h"
+#include "linkedlist.h"
 
 class Loader {
 public:
@@ -52,7 +53,7 @@ public:
         }
 
         // allocate array with extra slot for null terminator
-        std::string* arr = new std::string[count + 1];
+        std::string* arr = new std::string[count];
 
         // reset
         ss.clear();
@@ -63,8 +64,6 @@ public:
         while(std::getline(ss, item, ',')) {
             arr[i++] = trim(item);
         }
-
-        arr[count] = "";
 
         return arr;
     }
@@ -77,94 +76,104 @@ public:
 
         // load id
         std::getline(ss, item, ',');
-        std::cout << "ID read: " << item << std::endl;
+        std::cout << "ID read: " << item << std::endl; // debug
         property.setId(item.empty() ? 0 : std::stoi(trim(item)));
 
         // load name
-        std::getline(ss, item, ',');
-        std::cout << "Name read: " << item << std::endl;
-        property.setName(trim(item));
+        if (ss.peek() == '"') {
+            property.setName(extractQuotedString(ss));
+            std::getline(ss, item, ',');
+        } else {
+            std::getline(ss, item, ',');
+            property.setName(trim(item));
+        }
+        std::cout << "Name read: " << property.getName() << std::endl; // debug
 
         // load completion, convert into int
         std::getline(ss, item, ',');
-        std::cout << "Completion read: " << item << std::endl;
-        property.setCompletion(item.empty() ? 0 : std::stoi(trim(item)));
+        std::cout << "Completion read: " << item << std::endl; // debug
+        property.setCompletion(item.empty() ? 0 : getNumeric(trim(item)));
 
         // load rent, take only numbers, convert into int
         std::getline(ss, item, ',');
-        std::cout << "Rent read: " << item << std::endl;
+        std::cout << "Rent read: " << item << std::endl; // debug
         property.setRentPerMonth(item.empty() ? 0 : getNumeric(trim(item)));
 
         // load location
         std::getline(ss, item, ',');
-        std::cout << "Location read: " << item << std::endl;
+        std::cout << "Location read: " << item << std::endl; // debug
         property.setLocation(trim(item));
 
         // load type
         std::getline(ss, item, ',');
-        std::cout << "Type read: " << item << std::endl;
+        std::cout << "Type read: " << item << std::endl; // debug
         property.setType(trim(item));
 
         // load rooms
         std::getline(ss, item, ',');
-        std::cout << "Rooms read: " << item << std::endl;
-        property.setRooms(item.empty() ? 0 : std::stoi(trim(item)));
+        std::cout << "Rooms read: " << item << std::endl; // debug
+        property.setRooms(item.empty() ? 0 : getNumeric(trim(item)));
 
         // load parking, convert into int
         std::getline(ss, item, ',');
-        std::cout << "Parking read: " << item << std::endl;
-        property.setParking(item.empty() ? 0 : std::stoi(trim(item)));
+        std::cout << "Parking read: " << item << std::endl; // debug
+        property.setParking(item.empty() ? 0 : getNumeric(trim(item)));
 
         // load bathrooms, convert into int
         std::getline(ss, item, ',');
-        std::cout << "Bathrooms read: " << item << std::endl;
-        property.setBathrooms(item.empty() ? 0 : std::stoi(trim(item)));
+        std::cout << "Bathrooms read: " << item << std::endl; // debug
+        property.setBathrooms(item.empty() ? 0 : getNumeric(trim(item)));
 
         // load size, take numeric only, convert into int
         std::getline(ss, item, ',');
-        std::cout << "Size read: " << item << std::endl;
+        std::cout << "Size read: " << item << std::endl; // debug
         property.setSize(item.empty() ? 0 : getNumeric(trim(item)));
 
         // load furnished
         std::getline(ss, item, ',');
-        std::cout << "Furnished read: " << item << std::endl;
+        std::cout << "Furnished read: " << item << std::endl; // debug
         property.setFurnished(trim(item));
 
         // load facilities
         std::string facilities_str = extractQuotedString(ss);
-        std::cout << "Facilities read: " << facilities_str << std::endl;
+        std::cout << "Facilities read: " << facilities_str << std::endl; // debug
         property.setFacilities(parseArray(facilities_str));
 
         // load additional facilities
         std::string add_facilities_str = extractQuotedString(ss);
-        std::cout << "Additional Facilities read: " << add_facilities_str << std::endl;
+        std::cout << "Additional Facilities read: " << add_facilities_str << std::endl; // debug
         property.setAdditionalFacilities(parseArray(add_facilities_str));
 
         // load region
-        std::getline(ss, item, ','); // skip comma
+        std::getline(ss, item, ',');
         std::getline(ss, item);
-        std::cout << "Region read: " << item << std::endl;
+        std::cout << "Region read: " << item << std::endl; // debug
         property.setRegion(trim(item));
         
         std::cout << std::endl;
 
-        // return Property object 
+        // return property object 
         return property;
     }
 
-    // implement main loader here
-    // Property loadCSV(const std::string filename, int &size) {
-    //     std::ifstream file(filename);
-    //     if(!file.is_open()) {
-    //         std::cerr << "Failed to open " << filename << std::endl;
+    // main loader, saves indirectly to linked list through pointer
+    void loadCSV(const std::string& filename, LinkedList<Property>& list) {
+        std::ifstream file(filename);
+        if(!file.is_open()) {
+            std::cerr << "Failed to open " << filename << std::endl;
+            return;
+        }
 
-    //     }
+        std::string line;
+        std::getline(file, line); // skip header line
 
-    //     // get size of dataset first
-    //     // update size variable indirectly
+        int count = 0;
+        while(std::getline(file, line) && count < 25) {
+            Property property = loadLine(line);
+            list.append(property);
+            count++;
+        }
 
-    //     // create properties array with size of dataset
-    //     // run loadline for each line, add to properties array
-    //     // return array
-    // }
+        file.close();
+    }
 };
