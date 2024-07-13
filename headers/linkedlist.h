@@ -37,15 +37,26 @@ public:
         head = new_node;
     }
 
-    // print, for property functions only
-    void print(void (T::*printFunc)() const) {
+    // print linked list for int type
+    void print() const {
         Node<T>* temp = head;
-        while(temp != nullptr) {
-            (temp->data.*printFunc)();
+        while (temp != nullptr) {
+            std::cout << temp->data << std::endl; // Print integer directly
             temp = temp->next;
         }
         std::cout << "null" << std::endl;
     }
+
+    // overloaded print function for property type
+    void print(void (Property::*printFunc)() const) const {
+        Node<T>* temp = head;
+        while (temp != nullptr) {
+            (temp->data.*printFunc)(); // Call specific print function for Property
+            temp = temp->next;
+        }
+        std::cout << "null" << std::endl;
+    }
+
     // clear the list
     void clear() {
         Node<T>* current = head;
@@ -67,17 +78,5 @@ public:
             temp = temp->next;
         }
         return size;
-    }
-
-private:
-    // print data based on type
-    void printData(const T& data) {
-        if constexpr (std::is_same<T, Property>::value) {
-            // if datatype is property, print specific attribute
-            std::cout << data.getId() << std::endl;
-        } else {
-            // else print normally
-            std::cout << data << std::endl;
-        }
     }
 };
