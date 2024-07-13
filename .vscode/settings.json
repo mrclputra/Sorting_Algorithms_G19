@@ -55,6 +55,13 @@
         "optional": "cpp",
         "vector": "cpp",
         "regex": "cpp",
-        "chrono": "cpp"
+        "chrono": "cpp",
+        "forward_list": "cpp",
+        "functional": "cpp",
+        "iomanip": "cpp",
+        "list": "cpp",
+        "ratio": "cpp",
+        "unordered_map": "cpp",
+        "xhash": "cpp"
     }
 }

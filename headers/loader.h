@@ -25,14 +25,25 @@ private:
 
     // convert from string, extract numeric values only
     int getNumeric(const std::string& str) {
-        std::string num_str;
-        for(char ch : str) {
-            if(std::isdigit(ch)) {
-                num_str += ch;
-            }
+    std::string num_str;
+    bool has_decimal = false;
+
+    for (char ch : str) {
+        if (std::isdigit(ch)) {
+            num_str += ch;
+        } else if (ch == '.' && !has_decimal) {
+            num_str += ch;
+            has_decimal = true;
         }
-        return std::stoi(num_str);
     }
+
+    if (num_str.empty() || num_str == ".") {
+        return 0; // handle empty or invalid strings
+    }
+
+    double num_double = std::stod(num_str);
+    return static_cast<int>(num_double);
+}
 
     // extract quotes strings
     std::string extractQuotedString(std::stringstream& ss) {
@@ -79,7 +90,7 @@ private:
         std::cout << "ID read: " << item << std::endl; // debug
         property.setId(item.empty() ? 0 : std::stoi(trim(item)));
 
-        // load name
+        // load name, some names have quotes
         if (ss.peek() == '"') {
             property.setName(extractQuotedString(ss));
             std::getline(ss, item, ',');

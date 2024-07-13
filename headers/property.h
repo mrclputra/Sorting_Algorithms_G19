@@ -89,7 +89,7 @@ public:
     }
     void printMonthlyRent() const {
         std::cout << monthly_rent << std::endl;
-    }
+    }       
     void printLocation() const {
         std::cout << location << std::endl;
     }
