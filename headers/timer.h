@@ -5,10 +5,12 @@
 
 #include <chrono>
 
-class timer {
+class Timer {
 public:
-    timer() : start_time_(std::chrono::high_resolution_clock::now()) {}
+    // set start time on instance creation
+    Timer() : start_time_(std::chrono::high_resolution_clock::now()) {}
 
+    // reset start time to current time
     void reset() {
         start_time_ = std::chrono::high_resolution_clock::now();
     }

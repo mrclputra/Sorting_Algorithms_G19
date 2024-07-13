@@ -76,118 +76,142 @@ int main() {
 
     std::cout << "Finished loading all properties\n" << std::endl;
     sleepFor(1000);
-    clearScreen();
+    
+    bool continue_sorting = true;
+    while(continue_sorting) {
+        clearScreen();
 
-    // sorting options
-    choice = 0;
-    valid_input = false;
+        // sorting options
+        choice = 0;
+        valid_input = false;
 
-    // sort and print function pointers
-    int (Property::*getAttribute)() const = nullptr;
-    void (Property::*printAttribute)() const = nullptr;
+        // sort and print function pointers
+        int (Property::*getAttribute)() const = nullptr;
+        void (Property::*printAttribute)() const = nullptr;
 
-    while (!valid_input) {
-        std::cout << "Choose sorting criteria:" << std::endl;
-        std::cout << "1. Sort by ID" << std::endl;
-        std::cout << "2. Sort by Completion Year" << std::endl;
-        std::cout << "3. Sort by Monthly Rent" << std::endl;
-        std::cout << "4. Sort by Number of Rooms" << std::endl;
-        std::cout << "5. Sort by Parking" << std::endl;
-        std::cout << "6. Sort by Number of Bathrooms" << std::endl;
-        std::cout << "7. Sort by Size" << std::endl;
-        std::cout << "Entry: ";
+        while (!valid_input) {
+            std::cout << "Choose sorting criteria:" << std::endl;
+            std::cout << "1. Sort by ID" << std::endl;
+            std::cout << "2. Sort by Completion Year" << std::endl;
+            std::cout << "3. Sort by Monthly Rent" << std::endl;
+            std::cout << "4. Sort by Number of Rooms" << std::endl;
+            std::cout << "5. Sort by Parking" << std::endl;
+            std::cout << "6. Sort by Number of Bathrooms" << std::endl;
+            std::cout << "7. Sort by Size" << std::endl;
+            std::cout << "Entry: ";
 
-        std::cin >> choice;
+            std::cin >> choice;
 
-        if (std::cin.fail() || choice < 1 || choice > 7) {
-            clearInputBuffer();
-            std::cout << "Invalid Input" << std::endl;
-            sleepFor(2000);
-            clearScreen();
-        } else {
-            valid_input = true;
+            if (std::cin.fail() || choice < 1 || choice > 7) {
+                clearInputBuffer();
+                std::cout << "Invalid Input" << std::endl;
+                sleepFor(1000);
+                clearScreen();
+            } else {
+                valid_input = true;
+            }
         }
+
+        clearScreen();
+
+        switch (choice) {
+            case 1:
+                getAttribute = &Property::getId;
+                printAttribute = &Property::printId;
+                break;
+            case 2:
+                getAttribute = &Property::getCompletion;
+                printAttribute = &Property::printCompletion;
+                break;
+            case 3:
+                getAttribute = &Property::getMonthlyRent;
+                printAttribute = &Property::printMonthlyRent;
+                break;
+            case 4:
+                getAttribute = &Property::getRooms;
+                printAttribute = &Property::printRooms;
+                break;
+            case 5:
+                getAttribute = &Property::getParking;
+                printAttribute = &Property::printParking;
+                break;
+            case 6:
+                getAttribute = &Property::getBathrooms;
+                printAttribute = &Property::printBathrooms;
+                break;
+            case 7:
+                getAttribute = &Property::getSize;
+                printAttribute = &Property::printSize;
+                break;
+            default:
+                std::cout << "error unknown sort criteria" << std::endl;
+                break;
+        }
+
+        // create copies of loaded linkedlist
+        std::cout << "Copying Lists: number of properties = " << properties.size() << std::endl;
+        LinkedList<Property> quicksort_copy(properties);
+        LinkedList<Property> mergesort_copy(properties);
+        std::cout << "Finished Copying Lists" << std::endl;
+
+        // initialize timers
+        Timer quicksort_timer;
+        Timer mergesort_timer;
+
+        double quick_elapsed = 0.0;
+        double merge_elapsed = 0.0;
+
+        // run quick sort thread
+        std::thread quicksort_thread([&]() {
+            quicksort_timer.reset();
+            Quick::sort(quicksort_copy, getAttribute);
+            quick_elapsed = quicksort_timer.elapsed();
+            std::cout << "Finished QuickSort in " << quick_elapsed << " seconds.\n" << std::endl;
+        });
+
+        // quicksort bathrooms breaks at 19389 properties?
+
+        // run merge sort thread
+        // std::thread mergesort_thread([&] () {
+        //     mergesort_timer.reset();
+        //     Merge::sort(mergesort_copy, getAttribute);
+        //     merge_elapsed = mergesort_timer.elapsed();
+        //     std::cout << "Finished MergeSort in " << merge_elapsed << " seconds.\n" << std::endl;
+        // });
+        
+        // wait for both to finish
+        quicksort_thread.join();
+        // mergesort_thread.join();
+
+        choice = 0;
+        valid_input = false;
+
+        while(!valid_input) {
+            std::cout << "Do you want to sort by another attribute?" << std::endl;
+            std::cout << "1. Yes" << std::endl;
+            std::cout << "2. No" << std::endl;
+            std::cout << "Entry: ";
+            std::cin >> choice;
+
+            if (std::cin.fail() || (choice != 1 && choice != 2)) {
+                clearInputBuffer();
+                std::cout << "Invalid Input" << std::endl;
+                sleepFor(1000);
+                clearScreen();
+            } else {
+                valid_input = true;
+            }
+        }
+
+        continue_sorting = (choice == 1);
     }
 
-    clearScreen();
-    std::cout << "Starting Sorting" << std::endl;
-
-    switch (choice) {
-        case 1:
-            getAttribute = &Property::getId;
-            printAttribute = &Property::printId;
-            break;
-        case 2:
-            getAttribute = &Property::getCompletion;
-            printAttribute = &Property::printCompletion;
-            break;
-        case 3:
-            getAttribute = &Property::getMonthlyRent;
-            printAttribute = &Property::printMonthlyRent;
-            break;
-        case 4:
-            getAttribute = &Property::getRooms;
-            printAttribute = &Property::printRooms;
-            break;
-        case 5:
-            getAttribute = &Property::getParking;
-            printAttribute = &Property::printParking;
-            break;
-        case 6:
-            getAttribute = &Property::getBathrooms;
-            printAttribute = &Property::printBathrooms;
-            break;
-        case 7:
-            getAttribute = &Property::getSize;
-            printAttribute = &Property::printSize;
-            break;
-        default:
-            std::cout << "error unknown sort criteria" << std::endl;
-            break;
-    }
-
-    // create copy of linkedlist for merge sort
-    LinkedList<Property> properties_copy(properties);
-
-    // run quick sort
-    Quick::sort(properties, getAttribute);
-    std::cout << "Finished QuickSort.\n" << std::endl;
-
-    // run merge sort
-    Merge::sort(properties_copy, getAttribute);
-    std::cout << "Finished MergeSort.\n" << std::endl;
-
-    sleepFor(1000);
-
-    // // measure time for quick sort
-    // {
-    //     timer timer_quickSort;
-    //     Property* arr_quick = new Property[properties.getSize()];
-    //     properties.toArray(arr_quick);
-    //     Quick::sort(arr_quick, 0, properties.getSize() - 1);
-    //     time_quickSort = timer_quickSort.elapsed();
-    //     delete[] arr_quick;
-    // }
-
-    // // measure time for merge sort
-    // {
-    //     timer timer_mergeSort;
-    //     Property* arr_merge = new Property[properties.getSize()];
-    //     properties.toArray(arr_merge);
-    //     Merge::sort(arr_merge, properties.getSize());
-    //     time_mergeSort = timer_mergeSort.elapsed();
-    //     delete[] arr_merge;
-    // }
-
-    // //time taken by each sort
-    // std::cout << "Time taken for Quick Sort: " << time_quickSort << " seconds" << std::endl;
-    // std::cout << "Time taken for Merge Sort: " << time_mergeSort << " seconds" << std::endl;
-
+    properties.clear();
     return 0;
 }
 
 void clearScreen() {
-    // ANSI escape sequence, from reference below
+    // ANSI escape sequence, read reference below
     // https://en.wikipedia.org/wiki/ANSI_escape_code
     std::cout << "\x1b[2J\x1b[1;1H";
 }

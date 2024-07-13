@@ -11,45 +11,52 @@
 class Quick {
 public:
     static void sort(LinkedList<Property>& list, int (Property::*getAttribute)() const) {
-        list.head = quicksort(list.head, getTail(list.head), getAttribute);
+        if (list.head != nullptr) {
+            list.head = quicksort(list.head, getTail(list.head), getAttribute);
+        }
     }
 
 private:
-    static Node<Property>* getTail(Node<Property>* cur) {
-        while (cur != nullptr && cur->next != nullptr) {
-            cur = cur->next;
+    static Node<Property>* getTail(Node<Property>* curr) {
+        while (curr != nullptr && curr->next != nullptr) {
+            curr = curr->next;
         }
-        return cur;
+        return curr;
     }
 
-    static Node<Property>* partition(Node<Property>* head, Node<Property>* end, Node<Property>** newHead, Node<Property>** newEnd, int (Property::*getAttribute)() const) {
-        Node<Property>* pivot = end;
-        Node<Property>* prev = nullptr, *cur = head, *tail = pivot;
+    static Node<Property>* partition(Node<Property>* head, Node<Property>* end, Node<Property>** new_head, Node<Property>** new_end, int (Property::*getAttribute)() const) {
+        if (!head || !end || !new_head || !new_end) {
+            std::cerr << "Error: Null pointer encountered in partition function" << std::endl;
+            return nullptr;
+        }
 
-        while (cur != pivot) {
-            if ((cur->data.*getAttribute)() < (pivot->data.*getAttribute)()) {
-                if ((*newHead) == nullptr) {
-                    (*newHead) = cur;
+        Node<Property>* pivot = end;
+        Node<Property>* prev = nullptr, *curr = head, *tail = pivot;
+
+        while (curr != pivot) {
+            if ((curr->data.*getAttribute)() < (pivot->data.*getAttribute)()) {
+                if ((*new_head) == nullptr) {
+                    (*new_head) = curr;
                 }
-                prev = cur;
-                cur = cur->next;
+                prev = curr;
+                curr = curr->next;
             } else {
                 if (prev) {
-                    prev->next = cur->next;
+                    prev->next = curr->next;
                 }
-                Node<Property>* tmp = cur->next;
-                cur->next = nullptr;
-                tail->next = cur;
-                tail = cur;
-                cur = tmp;
+                Node<Property>* tmp = curr->next;
+                curr->next = nullptr;
+                tail->next = curr;
+                tail = curr;
+                curr = tmp;
             }
         }
 
-        if (*newHead == nullptr) {
-            *newHead = pivot;
+        if (*new_head == nullptr) {
+            *new_head = pivot;
         }
 
-        *newEnd = tail;
+        *new_end = tail;
 
         return pivot;
     }
@@ -59,38 +66,66 @@ private:
             return head;
         }
 
-        Node<Property>* newHead = nullptr;
-        Node<Property>* newEnd = nullptr;
+        Node<Property>* new_head = nullptr;
+        Node<Property>* new_end = nullptr;
 
-        Node<Property>* pivot = partition(head, end, &newHead, &newEnd, getAttribute);
+        Node<Property>* pivot = partition(head, end, &new_head, &new_end, getAttribute);
 
-        if (newHead != pivot) {
-            Node<Property>* tmp = newHead;
+        if (new_head != pivot) {
+            Node<Property>* tmp = new_head;
             while (tmp->next != pivot) {
                 tmp = tmp->next;
             }
             tmp->next = nullptr;
 
-            newHead = quicksort(newHead, tmp, getAttribute);
+            new_head = quicksort(new_head, tmp, getAttribute);
 
-            tmp = getTail(newHead);
+            tmp = getTail(new_head);
             tmp->next = pivot;
         }
 
-        pivot->next = quicksort(pivot->next, newEnd, getAttribute);
+        pivot->next = quicksort(pivot->next, new_end, getAttribute);
 
-        return newHead;
+        return new_head;
     }
 };
 
 class Merge {
-public: 
+public:
     static void sort(LinkedList<Property>& list, int (Property::*getAttribute)() const) {
         list.head = mergeSort(list.head, getAttribute);
     }
 
 private:
-    // merge two linkedlists
+    static Node<Property>* mergeSort(Node<Property>* head, int (Property::*getAttribute)() const) {
+        if (!head || !head->next) return head;
+
+        Node<Property>* middle = getMiddle(head);
+        Node<Property>* nextOfMiddle = middle->next;
+
+        middle->next = nullptr; // Split the list into two halves
+
+        Node<Property>* left = mergeSort(head, getAttribute);
+        Node<Property>* right = mergeSort(nextOfMiddle, getAttribute);
+
+        return merge(left, right, getAttribute);
+    }
+
+    static Node<Property>* getMiddle(Node<Property>* head) {
+        if (!head) return head;
+
+        Node<Property>* slow = head;
+        Node<Property>* fast = head->next;
+
+        // Move fast by 2 and slow by 1
+        while (fast != nullptr && fast->next != nullptr) {
+            slow = slow->next;
+            fast = fast->next->next;
+        }
+
+        return slow;
+    }
+
     static Node<Property>* merge(Node<Property>* left, Node<Property>* right, int (Property::*getAttribute)() const) {
         if (!left) return right;
         if (!right) return left;
@@ -107,92 +142,4 @@ private:
 
         return result;
     }
-
-    // get middle of list
-    static Node<Property>* getMiddle(Node<Property>* head) {
-        if (!head) return head;
-
-        Node<Property>* slow = head;
-        Node<Property>* fast = head->next;
-
-        while (fast && fast->next) {
-            slow = slow->next;
-            fast = fast->next->next;
-        }
-
-        return slow;
-    }
-
-    // sort
-    static Node<Property>* mergeSort(Node<Property>* head, int (Property::*getAttribute)() const) {
-        if (!head || !head->next) {
-            return head;
-        }
-
-        Node<Property>* middle = getMiddle(head);
-        Node<Property>* second_half_start = middle->next;
-        middle->next = nullptr;
-
-        Node<Property>* left = mergeSort(head, getAttribute);
-        Node<Property>* right = mergeSort(second_half_start, getAttribute);
-
-        return merge(left, right, getAttribute);
-    }
 };
-
-/*
-alternative merge sort implementation below
-*/
-// class Merge {
-// public:
-//     static void sort(LinkedList<Property>& list, int (Property::*getAttribute)() const) {
-//         list.head = mergeSort(list.head, getAttribute);
-//     }
-
-// private:
-//     static Node<Property>* merge(Node<Property>* first, Node<Property>* second, int (Property::*getAttribute)() const) {
-//         if (!first) return second;
-//         if (!second) return first;
-
-//         Node<Property>* result = nullptr;
-
-//         if ((first->data.*getAttribute)() <= (second->data.*getAttribute)()) {
-//             result = first;
-//             result->next = merge(first->next, second, getAttribute);
-//         } else {
-//             result = second;
-//             result->next = merge(first, second->next, getAttribute);
-//         }
-
-//         return result;
-//     }
-
-//     static Node<Property>* getMiddle(Node<Property>* head) {
-//         if (!head) return head;
-
-//         Node<Property>* slow = head;
-//         Node<Property>* fast = head->next;
-
-//         while (fast && fast->next) {
-//             slow = slow->next;
-//             fast = fast->next->next;
-//         }
-
-//         return slow;
-//     }
-
-//     static Node<Property>* mergeSort(Node<Property>* head, int (Property::*getAttribute)() const) {
-//         if (!head || !head->next) {
-//             return head;
-//         }
-
-//         Node<Property>* middle = getMiddle(head);
-//         Node<Property>* nextOfMiddle = middle->next;
-//         middle->next = nullptr;
-
-//         Node<Property>* left = mergeSort(head, getAttribute);
-//         Node<Property>* right = mergeSort(nextOfMiddle, getAttribute);
-
-//         return merge(left, right, getAttribute);
-//     }
-// };

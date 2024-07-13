@@ -17,42 +17,32 @@ private:
     int bathrooms;
     int size;
     std::string furnished;
-    // std::string* facilities;
-    // std::string* add_facilities;
     LinkedList<std::string> facilities;
     LinkedList<std::string> add_facilities;
     std::string region;
 
 public:
-    // standard constructor, unused
-    Property(int id, const std::string &name, int completion, int monthly_rent, const std::string &location, const std::string &type,
-             int rooms, int parking, int bathrooms, int size, const std::string &furnished,
-             const LinkedList<std::string> &facilities, const LinkedList<std::string> &add_facilities,
-             const std::string &region) : id(id), name(name), completion(completion), monthly_rent(monthly_rent), location(location), type(type),
-                                          rooms(rooms), parking(parking), bathrooms(bathrooms), size(size), furnished(furnished),
-                                          facilities(facilities), add_facilities(add_facilities), region(region) {}
-
     // default constructor
     Property() {}
 
-    // display all details
-    void display() {
-        std::cout << "Property ID: " << getId() << std::endl;
-        std::cout << "Name: " << getName() << std::endl;
-        std::cout << "Completion Year: " << getCompletion() << std::endl;
-        std::cout << "Monthly Rent: " << getMonthlyRent() << std::endl;
-        std::cout << "Location: " << getLocation() << std::endl;
-        std::cout << "Type: " << getType() << std::endl;
-        std::cout << "Rooms: " << getRooms() << std::endl;
-        std::cout << "Parking: " << getParking() << std::endl;
-        std::cout << "Bathrooms: " << getBathrooms() << std::endl;
-        std::cout << "Size: " << getSize() << std::endl;
-        std::cout << "Furnished: " << getFurnished() << std::endl;
-        std::cout << "Facilities: ";
-        facilities.print();
-        std::cout << "Additional Facilities: ";
-        add_facilities.print();
-        std::cout << "Region: " << getRegion() << std::endl;
+    // deconstructor, clear linked lists for safety
+    ~Property() {
+        facilities.clear();
+        add_facilities.clear();
+    }
+
+    // display all details, for debug use
+    void display() const {
+        std::cout << "Property ID: " << getId() 
+              << ", Completion Year: " << getCompletion() 
+              << ", Monthly Rent: " << getMonthlyRent() 
+              << ", Rooms: " << getRooms() 
+              << ", Parking: " << getParking() 
+              << ", Bathrooms: " << getBathrooms() 
+              << ", Size: " << getSize() 
+              << ", Furnished: " << getFurnished();
+        std::cout << ", Region: " << getRegion() 
+              << std::endl;
     }
 
     void printId() const {
@@ -100,19 +90,19 @@ public:
 
     // setters
     void setId(int id) { this->id = id; }
-    void setName(const std::string& name) { this->name = name; }
+    void setName(const std::string &name) { this->name = name; }
     void setCompletion(int completion) { this->completion = completion; }
     void setRentPerMonth(int monthly_rent) { this->monthly_rent = monthly_rent; }
-    void setLocation(const std::string& location) { this->location = location; }
-    void setType(const std::string& type) { this->type = type; }
+    void setLocation(const std::string &location) { this->location = location; }
+    void setType(const std::string &type) { this->type = type; }
     void setRooms(int rooms) { this->rooms = rooms; }
     void setParking(int parking) { this->parking = parking; }
     void setBathrooms(int bathrooms) { this->bathrooms = bathrooms; }
     void setSize(int size) { this->size = size; }
-    void setFurnished(const std::string& furnished) { this->furnished = furnished; }
-    void setFacilities(const LinkedList<std::string>& facilities) { this->facilities = facilities; }
-    void setAdditionalFacilities(const LinkedList<std::string>& add_facilities) { this->add_facilities = add_facilities; }
-    void setRegion(const std::string& region) { this->region = region; }
+    void setFurnished(const std::string &furnished) { this->furnished = furnished; }
+    void setFacilities(const LinkedList<std::string> &facilities) { this->facilities = facilities; }
+    void setAdditionalFacilities(const LinkedList<std::string> &add_facilities) { this->add_facilities = add_facilities; }
+    void setRegion(const std::string &region) { this->region = region; }
 
     // getters
     int getId() const { return id; }
@@ -126,7 +116,7 @@ public:
     int getBathrooms() const { return bathrooms; }
     int getSize() const { return size; }
     std::string getFurnished() const { return furnished; }
-    const LinkedList<std::string>& getFacilities() const { return facilities; }
-    const LinkedList<std::string>& getAddFacilities() const { return add_facilities; }
+    const LinkedList<std::string> &getFacilities() const { return facilities; }
+    const LinkedList<std::string> &getAddFacilities() const { return add_facilities; }
     std::string getRegion() const { return region; }
 };

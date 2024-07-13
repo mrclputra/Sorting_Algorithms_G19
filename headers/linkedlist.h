@@ -17,20 +17,23 @@ class LinkedList {
 public:
     Node<T>* head = nullptr;
 
-    // copy constructor, to duplicate self
-    LinkedList(const LinkedList& other) {
-        head = nullptr;
-        if (other.head) {
-            Node* current = other.head;
-            while (current) {
-                append(current->data);
-                current = current->next;
-            }
-        }
-    }
-
     // default constructor
     LinkedList() {}
+
+    // copy constructor
+    LinkedList(const LinkedList& other) {
+        copyFrom(other);
+    }
+
+    // copy assignment operator
+    // used to handle the assignment of one linked list to another, i.e. in functions that return the linkedlist
+    LinkedList& operator=(const LinkedList& other) {
+        if (this != &other) {
+            clear();
+            copyFrom(other);
+        }
+        return *this;
+    }
 
     // destructor
     ~LinkedList() {
@@ -64,7 +67,7 @@ public:
             std::cout << temp->data << std::endl;
             temp = temp->next;
         }
-        std::cout << "null" << std::endl;
+        std::cout << std::endl;
     }
 
     // overloaded print function for property type
@@ -74,15 +77,37 @@ public:
             (temp->data.*printFunc)(); // Call specific print function for Property
             temp = temp->next;
         }
-        std::cout << "null" << std::endl;
+        std::cout << std::endl;
+    }
+
+    // print a range of Property elements
+    void printRange(int start, int end, void (T::*printFunc)() const) const {
+        if (start > end || start < 0) {
+            std::cerr << "Invalid range!" << std::endl;
+            return;
+        }
+
+        Node<T>* temp = head;
+        int index = 0;
+
+        while (temp != nullptr && index < start) {
+            temp = temp->next;
+            ++index;
+        }
+
+        while (temp != nullptr && index <= end) {
+            (temp->data.*printFunc)(); // Call specific print function for Property
+            temp = temp->next;
+            ++index;
+        }
+        std::cout << std::endl;
     }
 
     // clear the list
     void clear() {
         Node<T>* current = head;
-        Node<T>* next_node;
         while(current != nullptr) {
-            next_node = current->next;
+            Node<T>* next_node = current->next;
             delete current;
             current = next_node;
         }
@@ -90,7 +115,7 @@ public:
     }
 
     // get size
-    int getSize() const {
+    int size() const {
         int size = 0;
         Node<T>* temp = head;
         while (temp != nullptr) {
@@ -98,5 +123,24 @@ public:
             temp = temp->next;
         }
         return size;
+    }
+
+private:
+    // helper function to copy from another linkedlist
+    void copyFrom(const LinkedList& other) {
+        if (!other.head) {
+            head = nullptr;
+            return;
+        }
+
+        head = new Node<T>(other.head->data);
+        Node<T>* current = head;
+        Node<T>* otherCurrent = other.head->next;
+
+        while (otherCurrent) {
+            current->next = new Node<T>(otherCurrent->data);
+            current = current->next;
+            otherCurrent = otherCurrent->next;
+        }
     }
 };

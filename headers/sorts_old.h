@@ -12,7 +12,7 @@ template <typename T>
 class Quick {
 public:
 	static void sort(LinkedList<Property>& list, int (Property::*getter)() const) {
-        if (list.getSize() <= 1) {
+        if (list.size() <= 1) {
             return; // if list is alread sorted
         }
 

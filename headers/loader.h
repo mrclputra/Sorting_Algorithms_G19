@@ -63,6 +63,7 @@ private:
             list.append(trim(item));
         }
 
+        // copy assignment operator is in use here
         return list;
     }
 
