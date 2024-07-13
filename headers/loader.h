@@ -54,30 +54,16 @@ private:
     }
 
     // parse csv string into array of strings
-    std::string* parseArray(const std::string& str) {
+    LinkedList<std::string> parseArray(const std::string& str) {
+        LinkedList<std::string> list;
         std::stringstream ss(str);
         std::string item;
-        int count = 0;
 
-        // first pass, get number of items
-        while(std::getline(ss, item, ',')) {
-            count++;
+        while (std::getline(ss, item, ',')) {
+            list.append(trim(item));
         }
 
-        // allocate array with extra slot for null terminator
-        std::string* arr = new std::string[count];
-
-        // reset
-        ss.clear();
-        ss.seekg(0, std::ios::beg);
-
-        // second pass, fill array
-        int i = 0;
-        while(std::getline(ss, item, ',')) {
-            arr[i++] = trim(item);
-        }
-
-        return arr;
+        return list;
     }
 
     Property loadLine(const std::string& line) {

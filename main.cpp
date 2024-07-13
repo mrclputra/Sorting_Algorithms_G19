@@ -18,15 +18,17 @@ int main() {
     double time_quickSort, time_mergeSort;
 
     loader.loadCSV("dataset.csv", properties, 25); // 3rd int defines number of lines, set to -1 to load all
-    std::cout << "Finished loading all properties" << std::endl;
+    std::cout << "Finished loading all properties\n" << std::endl;
 
-    properties.head->data.printBathrooms(); // this is how you call individual prints
+    // properties.head->data.printBathrooms(); // this is how you call individual prints
 
-    properties.print(&Property::printCompletion); // this is how you call a print all
+    std::cout << "Before Sort :" << std::endl;
+    properties.print(&Property::printMonthlyRent); // this is how you call a print all
 
-    Quick::sort(properties, &Property::getCompletion);
+    Quick::sort(properties, &Property::getMonthlyRent);
 
-    properties.print(&Property::printCompletion);
+    std::cout << std::endl << "After Sort :" << std::endl;
+    properties.print(&Property::printMonthlyRent);
 
     // // measure time for quick sort
     // {

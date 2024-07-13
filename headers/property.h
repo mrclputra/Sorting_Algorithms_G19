@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include "linkedlist.h"
 
 class Property {
 private:
@@ -16,22 +17,23 @@ private:
     int bathrooms;
     int size;
     std::string furnished;
-    std::string* facilities;
-    std::string* add_facilities;
+    // std::string* facilities;
+    // std::string* add_facilities;
+    LinkedList<std::string> facilities;
+    LinkedList<std::string> add_facilities;
     std::string region;
 
 public:
     // standard constructor, unused
     Property(int id, const std::string &name, int completion, int monthly_rent, const std::string &location, const std::string &type,
              int rooms, int parking, int bathrooms, int size, const std::string &furnished,
-             std::string *facilities, int num_facilities,
-             std::string *add_facilities, int num_add_facilities,
+             const LinkedList<std::string> &facilities, const LinkedList<std::string> &add_facilities,
              const std::string &region) : id(id), name(name), completion(completion), monthly_rent(monthly_rent), location(location), type(type),
                                           rooms(rooms), parking(parking), bathrooms(bathrooms), size(size), furnished(furnished),
                                           facilities(facilities), add_facilities(add_facilities), region(region) {}
 
-    // empty constructor
-    Property() : facilities(nullptr), add_facilities(nullptr) {}
+    // default constructor
+    Property() {}
 
     // display all details
     void display() {
@@ -46,35 +48,10 @@ public:
         std::cout << "Bathrooms: " << getBathrooms() << std::endl;
         std::cout << "Size: " << getSize() << std::endl;
         std::cout << "Furnished: " << getFurnished() << std::endl;
-
-        // print facilities
         std::cout << "Facilities: ";
-        bool first = true;
-        for (int i = 0; facilities[i] != ""; ++i) {
-            if (!facilities[i].empty()) {
-                if (!first) {
-                    std::cout << ", ";
-                }
-                std::cout << facilities[i];
-                first = false;
-            }
-        }
-        std::cout << std::endl;
-
-        // print additional facilities
+        facilities.print();
         std::cout << "Additional Facilities: ";
-        first = true;
-        for (int i = 0; add_facilities[i] != ""; ++i) {
-            if (!add_facilities[i].empty()) {
-                if (!first) {
-                    std::cout << ", ";
-                }
-                std::cout << add_facilities[i];
-                first = false;
-            }
-        }
-        std::cout << std::endl;
-
+        add_facilities.print();
         std::cout << "Region: " << getRegion() << std::endl;
     }
 
@@ -112,30 +89,10 @@ public:
         std::cout << furnished << std::endl;
     }
     void printFacilities() const {
-        bool first = true;
-        for (int i = 0; facilities[i] != ""; ++i) {
-            if (!facilities[i].empty()) {
-                if (!first) {
-                    std::cout << ", ";
-                }
-                std::cout << facilities[i];
-                first = false;
-            }
-        }
-        std::cout << std::endl;
+        facilities.print();
     }
     void printAdditionalFacilities() const {
-        bool first = true;
-        for (int i = 0; add_facilities[i] != ""; ++i) {
-            if (!add_facilities[i].empty()) {
-                if (!first) {
-                    std::cout << ", ";
-                }
-                std::cout << add_facilities[i];
-                first = false;
-            }
-        }
-        std::cout << std::endl;
+        add_facilities.print();
     }
     void printRegion() const {
         std::cout << region << std::endl;
@@ -153,14 +110,8 @@ public:
     void setBathrooms(int bathrooms) { this->bathrooms = bathrooms; }
     void setSize(int size) { this->size = size; }
     void setFurnished(const std::string& furnished) { this->furnished = furnished; }
-    void setFacilities(std::string* facilities) {
-        delete[] this->facilities; // clean up previous allocation
-        this->facilities = facilities;
-    }
-    void setAdditionalFacilities(std::string* add_facilities) {
-        delete[] this->add_facilities; // clean up previous allocation
-        this->add_facilities = add_facilities;
-    }
+    void setFacilities(const LinkedList<std::string>& facilities) { this->facilities = facilities; }
+    void setAdditionalFacilities(const LinkedList<std::string>& add_facilities) { this->add_facilities = add_facilities; }
     void setRegion(const std::string& region) { this->region = region; }
 
     // getters
@@ -175,7 +126,7 @@ public:
     int getBathrooms() const { return bathrooms; }
     int getSize() const { return size; }
     std::string getFurnished() const { return furnished; }
-    const std::string* getFacilities() const { return facilities; }
-    const std::string* getAddFacilities() const { return add_facilities; }
+    const LinkedList<std::string>& getFacilities() const { return facilities; }
+    const LinkedList<std::string>& getAddFacilities() const { return add_facilities; }
     std::string getRegion() const { return region; }
 };
