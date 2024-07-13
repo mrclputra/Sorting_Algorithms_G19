@@ -1,6 +1,7 @@
 #pragma once
 
 #include <functional>
+[[deprecated("This header is deprecated and broken. Use sorts.h instead.")]]
 
 #include "property.h"
 #include "linkedlist.h"
@@ -123,65 +124,65 @@ private:
 
 // };
 
-// class Merge {
-// public:
-//     static void sort(Property* arr, int size) {
-//         mergeSort(arr, 0, size - 1);
-//     }
+class Merge {
+public:
+    static void sort(Property* arr, int size) {
+        mergeSort(arr, 0, size - 1);
+    }
 
-// private:
-//     // merge 
-//     static void mergeSort(Property* arr, int low, int high) {
-//         if (low < high) {
-//             int mid = low + (high - low) / 2;  // create middle index
+private:
+    // merge 
+    static void mergeSort(Property* arr, int low, int high) {
+        if (low < high) {
+            int mid = low + (high - low) / 2;  // create middle index
 
-//             //sort the two halves
-//             mergeSort(arr, low, mid);
-//             mergeSort(arr, mid + 1, high);
+            //sort the two halves
+            mergeSort(arr, low, mid);
+            mergeSort(arr, mid + 1, high);
 
-//             // merge the sorted halves
-//             merge(arr, low, mid, high);
-//         }
-//     }
+            // merge the sorted halves
+            merge(arr, low, mid, high);
+        }
+    }
 
-//     // merge two halves of array
-//     static void merge(Property* arr, int low, int mid, int high) {
-//         int leftSize = mid - low + 1;
-//         int rightSize = high - mid;
+    // merge two halves of array
+    static void merge(Property* arr, int low, int mid, int high) {
+        int leftSize = mid - low + 1;
+        int rightSize = high - mid;
 
-//         // Temp arrays
-//         Property left[leftSize], right[rightSize];
+        // Temp arrays
+        Property left[leftSize], right[rightSize];
         
-//         // copy data to temp arrays
-//         for (int i = 0; i < leftSize; ++i)
-//             left[i] = arr[low + i];
-//         for (int j = 0; j < rightSize; ++j)
-//             right[j] = arr[mid + 1 + j];
+        // copy data to temp arrays
+        for (int i = 0; i < leftSize; ++i)
+            left[i] = arr[low + i];
+        for (int j = 0; j < rightSize; ++j)
+            right[j] = arr[mid + 1 + j];
 
-//         // merge the temporary arrays back into arr[low..high]
-//         int i = 0;     // initial index of left subarray
-//         int j = 0;     // initial index of right subarray
-//         int k = low;   // initial index of merged subarray
+        // merge the temporary arrays back into arr[low..high]
+        int i = 0;     // initial index of left subarray
+        int j = 0;     // initial index of right subarray
+        int k = low;   // initial index of merged subarray
 
-//         while (i < leftSize && j < rightSize) {
-//             if (left[i].getId() <= right[j].getId()) {
-//                 arr[k++] = left[i++];
-//             } else {
-//                 arr[k++] = right[j++];
-//             }
-//         }
+        while (i < leftSize && j < rightSize) {
+            if (left[i].getId() <= right[j].getId()) {
+                arr[k++] = left[i++];
+            } else {
+                arr[k++] = right[j++];
+            }
+        }
 
-//         // copy remaining elements of left[] if any
-//         while (i < leftSize) {
-//             arr[k++] = left[i++];
-//         }
+        // copy remaining elements of left[] if any
+        while (i < leftSize) {
+            arr[k++] = left[i++];
+        }
 
-//         // copy remaining elements of right[] if any
-//         while (j < rightSize) {
-//             arr[k++] = right[j++];
-//         }
-//     }
-// };
+        // copy remaining elements of right[] if any
+        while (j < rightSize) {
+            arr[k++] = right[j++];
+        }
+    }
+};
 
 // replace with merge sort soon
 // class Heap {

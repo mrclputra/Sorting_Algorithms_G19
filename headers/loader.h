@@ -17,36 +17,36 @@ class Loader {
 // utility functions
 private:
     // trim whitespace
-    std::string trim(const std::string& str) {
+    static std::string trim(const std::string& str) {
         size_t start = str.find_first_not_of(" \t\n\r");
         size_t end = str.find_last_not_of(" \t\n\r");
         return (start == std::string::npos) ? "" : str.substr(start, end - start + 1);
     }
 
     // convert from string, extract numeric values only
-    int getNumeric(const std::string& str) {
-    std::string num_str;
-    bool has_decimal = false;
+    static int getNumeric(const std::string& str) {
+        std::string num_str;
+        bool has_decimal = false;
 
-    for (char ch : str) {
-        if (std::isdigit(ch)) {
-            num_str += ch;
-        } else if (ch == '.' && !has_decimal) {
-            num_str += ch;
-            has_decimal = true;
+        for (char ch : str) {
+            if (std::isdigit(ch)) {
+                num_str += ch;
+            } else if (ch == '.' && !has_decimal) {
+                num_str += ch;
+                has_decimal = true;
+            }
         }
-    }
 
-    if (num_str.empty() || num_str == ".") {
-        return 0; // handle empty or invalid strings
-    }
+        if (num_str.empty() || num_str == ".") {
+            return 0; // handle empty or invalid strings
+        }
 
-    double num_double = std::stod(num_str);
-    return static_cast<int>(num_double);
-}
+        double num_double = std::stod(num_str);
+        return static_cast<int>(num_double);
+    }
 
     // extract quotes strings
-    std::string extractQuotedString(std::stringstream& ss) {
+    static std::string extractQuotedString(std::stringstream& ss) {
         std::string item;
         std::getline(ss, item, '"'); // skip the first quote
         std::getline(ss, item, '"'); // read until the next quote
@@ -54,7 +54,7 @@ private:
     }
 
     // parse csv string into array of strings
-    LinkedList<std::string> parseArray(const std::string& str) {
+    static LinkedList<std::string> parseArray(const std::string& str) {
         LinkedList<std::string> list;
         std::stringstream ss(str);
         std::string item;
@@ -66,7 +66,7 @@ private:
         return list;
     }
 
-    Property loadLine(const std::string& line) {
+    static Property loadLine(const std::string& line) {
         Property property;
         std::stringstream ss(line);
         std::string item;
@@ -154,10 +154,10 @@ private:
     }
 
 
-public: 
+public:
     // main loader, saves indirectly to linked list through pointer
     // element determine number of lines to parse, -1 for all
-    void loadCSV(const std::string& filename, LinkedList<Property>& list, int elements) {
+    static void loadCSV(const std::string& filename, LinkedList<Property>& list, int elements) {
         std::ifstream file(filename);
         if(!file.is_open()) {
             std::cerr << "Failed to open " << filename << std::endl;

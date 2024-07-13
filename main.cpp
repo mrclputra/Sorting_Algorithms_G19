@@ -12,12 +12,11 @@ void testLoadLine();
 void testQuotedStringExtract();
 
 int main() {
-    Loader loader;
     LinkedList<Property> properties;
 
     double time_quickSort, time_mergeSort;
 
-    loader.loadCSV("dataset.csv", properties, 25); // 3rd int defines number of lines, set to -1 to load all
+    Loader::loadCSV("dataset.csv", properties, 25); // 3rd int defines number of lines, set to -1 to load all
     std::cout << "Finished loading all properties\n" << std::endl;
 
     // properties.head->data.printBathrooms(); // this is how you call individual prints
@@ -25,7 +24,8 @@ int main() {
     std::cout << "Before Sort :" << std::endl;
     properties.print(&Property::printMonthlyRent); // this is how you call a print all
 
-    Quick::sort(properties, &Property::getMonthlyRent);
+    // Quick::sort(properties, &Property::getMonthlyRent);
+    Merge::sort(properties, &Property::getMonthlyRent);
 
     std::cout << std::endl << "After Sort :" << std::endl;
     properties.print(&Property::printMonthlyRent);
