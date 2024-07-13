@@ -1,99 +1,61 @@
 #pragma once
 
 #include <iostream>
-#include <functional>
-#include "property.h"
 
-// node class template
+// Define the Node structure
 template <typename T>
-class Node {
-public:
+struct Node {
     T data;
     Node* next;
-
-    // constructor
-    Node(T data) : data(data), next(nullptr) {}
+    
+    Node(T value) : data(value), next(nullptr) {}
 };
 
-// linked list class template
+// Define the LinkedList class
 template <typename T>
 class LinkedList {
 private:
     Node<T>* head;
+    Node<T>* tail;
 
 public:
-    // constructor
-    LinkedList() : head(nullptr) {}
-    
-    // destructor
-    ~LinkedList() {
-        clear();
-    }
+    LinkedList() : head(nullptr), tail(nullptr) {}
 
-    // add element to end of list
-    void append(T data) {
-        Node<T>* new_node = new Node<T>(data);
-        if(head == nullptr) {
-            head = new_node; // set as head if empty
+    void append(const T& value) {
+        Node<T>* newNode = new Node<T>(value);
+        if (!head) {
+            head = newNode;
+            tail = newNode;
         } else {
-            Node<T>* temp = head;
-            while(temp->next != nullptr) {
-                temp = temp->next; // iterate to end
-            }
-            temp->next = new_node; // add to end
+            tail->next = newNode;
+            tail = newNode;
         }
     }
 
-    // add element to beginning of list
-    void prepend(T data) {
-        Node<T>* new_node = new Node<T>(data);
-        new_node->next = head;
-        head = new_node;
-    }
-
-    // print list
-    // for testing
-    // void print() {
-    //     Node<T>* temp = head;
-    //     while(temp != nullptr) {
-    //         printData(temp->data);
-    //         temp = temp->next;
-    //     }
-    //     std::cout << "null" << std::endl;
-    // }
-
-    void print(void (T::*printFunc)() const) {
+    void print(void (T::*printFunc)() const) const {
         Node<T>* temp = head;
-        while(temp != nullptr) {
+        while (temp) {
             (temp->data.*printFunc)();
             temp = temp->next;
         }
-        std::cout << "null" << std::endl;
     }
 
-    // clear the list
-    void clear() {
-        Node<T>* current = head;
-        Node<T>* next_node;
-
-        while(current != nullptr) {
-            next_node = current->next;
-            delete current;
-            current = next_node;
+    int getSize() const {
+        int count = 0;
+        Node<T>* temp = head;
+        while (temp != nullptr) {
+            count++;
+            temp = temp->next;
         }
-
-        head = nullptr;
+        return count;
     }
 
-private:
-    // print data based on type
-    void printData(const T& data) {
-        if constexpr (std::is_same<T, Property>::value) {
-            // if datatype is property, print specific attribute
-            std::cout << data.getId() << std::endl;
-        } else {
-            // else print normally
-            std::cout << data << std::endl;
+    void toArray(T* arr) const {
+        Node<T>* temp = head;
+        int index = 0;
+        while (temp != nullptr) {
+            arr[index++] = temp->data;
+            temp = temp->next;
         }
     }
 };

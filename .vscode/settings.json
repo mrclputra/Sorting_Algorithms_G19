@@ -54,6 +54,7 @@
         "algorithm": "cpp",
         "optional": "cpp",
         "vector": "cpp",
-        "regex": "cpp"
+        "regex": "cpp",
+        "chrono": "cpp"
     }
 }
