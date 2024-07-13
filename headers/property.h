@@ -55,7 +55,7 @@ public:
         std::cout << "Region: " << getRegion() << std::endl;
     }
 
-    void printPropertyId() const {
+    void printId() const {
         std::cout << id << std::endl;
     }
     void printName() const {

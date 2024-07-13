@@ -17,6 +17,26 @@ class LinkedList {
 public:
     Node<T>* head = nullptr;
 
+    // copy constructor, to duplicate self
+    LinkedList(const LinkedList& other) {
+        head = nullptr;
+        if (other.head) {
+            Node* current = other.head;
+            while (current) {
+                append(current->data);
+                current = current->next;
+            }
+        }
+    }
+
+    // default constructor
+    LinkedList() {}
+
+    // destructor
+    ~LinkedList() {
+        clear();
+    }
+
     // add element to end of list
     void append(T data) {
         Node<T>* new_node = new Node<T>(data);
