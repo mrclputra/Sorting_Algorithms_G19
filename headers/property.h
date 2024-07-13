@@ -21,7 +21,7 @@ private:
     std::string region;
 
 public:
-    // standard constructor
+    // standard constructor, unused
     Property(int id, const std::string &name, int completion, int monthly_rent, const std::string &location, const std::string &type,
              int rooms, int parking, int bathrooms, int size, const std::string &furnished,
              std::string *facilities, int num_facilities,
@@ -33,15 +33,9 @@ public:
     // empty constructor
     Property() : facilities(nullptr), add_facilities(nullptr) {}
 
-    // deconstructor to free memory
-    // ~Property() {
-    //     delete[] facilities;
-    //     delete[] add_facilities;
-    // }
-
     // display all details
     void display() {
-        std::cout << "Property ID: " << getID() << std::endl;
+        std::cout << "Property ID: " << getId() << std::endl;
         std::cout << "Name: " << getName() << std::endl;
         std::cout << "Completion Year: " << getCompletion() << std::endl;
         std::cout << "Monthly Rent: " << getMonthlyRent() << std::endl;
@@ -84,6 +78,69 @@ public:
         std::cout << "Region: " << getRegion() << std::endl;
     }
 
+    void printPropertyId() const {
+        std::cout << id << std::endl;
+    }
+    void printName() const {
+        std::cout << name << std::endl;
+    }
+    void printCompletion() const {
+        std::cout << completion << std::endl;
+    }
+    void printMonthlyRent() const {
+        std::cout << monthly_rent << std::endl;
+    }
+    void printLocation() const {
+        std::cout << location << std::endl;
+    }
+    void printType() const {
+        std::cout << type << std::endl;
+    }
+    void printRooms() const {
+        std::cout << rooms << std::endl;
+    }
+    void printParking() const {
+        std::cout << parking << std::endl;
+    }
+    void printBathrooms() const {
+        std::cout << bathrooms << std::endl;
+    }
+    void printSize() const {
+        std::cout << size << std::endl;
+    }
+    void printFurnished() const {
+        std::cout << furnished << std::endl;
+    }
+    void printFacilities() const {
+        bool first = true;
+        for (int i = 0; facilities[i] != ""; ++i) {
+            if (!facilities[i].empty()) {
+                if (!first) {
+                    std::cout << ", ";
+                }
+                std::cout << facilities[i];
+                first = false;
+            }
+        }
+        std::cout << std::endl;
+    }
+    void printAdditionalFacilities() const {
+        bool first = true;
+        for (int i = 0; add_facilities[i] != ""; ++i) {
+            if (!add_facilities[i].empty()) {
+                if (!first) {
+                    std::cout << ", ";
+                }
+                std::cout << add_facilities[i];
+                first = false;
+            }
+        }
+        std::cout << std::endl;
+    }
+    void printRegion() const {
+        std::cout << region << std::endl;
+    }
+
     // setters
     void setId(int id) { this->id = id; }
     void setName(const std::string& name) { this->name = name; }
@@ -107,7 +164,7 @@ public:
     void setRegion(const std::string& region) { this->region = region; }
 
     // getters
-    int getID() const { return id; }
+    int getId() const { return id; }
     std::string getName() const { return name; }
     int getCompletion() const { return completion; }
     int getMonthlyRent() const { return monthly_rent; }

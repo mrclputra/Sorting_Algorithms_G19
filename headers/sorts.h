@@ -20,8 +20,9 @@ private:
 		Property pivot = arr[high];		// last element as pivot
 		int i = low - 1;				// index of smaller element
 
-		for (int j = low; j < high; j++) {			// help
-			if (arr[j].getID() < pivot.getID()) {
+		// what the fuck
+		for (int j = low; j < high; j++) {
+			if (arr[j].getId() < pivot.getId()) {
 				i++;
 				std::swap(arr[i], arr[j]);
 			}
@@ -53,11 +54,11 @@ private:
 		int l = 2 * i + 1;	// left
 		int r = 2 * i + 2;	// right
 
-		if (l < size && arr[l].getID() > arr[largest].getID()) {
+		if (l < size && arr[l].getId() > arr[largest].getId()) {
 			largest = l;
 		}
 
-		if (r < size && arr[r].getID() > arr[largest].getID()) {
+		if (r < size && arr[r].getId() > arr[largest].getId()) {
 			largest = r;
 		}
 

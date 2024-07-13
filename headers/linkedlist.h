@@ -1,6 +1,7 @@
 #pragma once
 
 #include <iostream>
+#include <functional>
 #include "property.h"
 
 // node class template
@@ -52,10 +53,19 @@ public:
 
     // print list
     // for testing
-    void print() {
+    // void print() {
+    //     Node<T>* temp = head;
+    //     while(temp != nullptr) {
+    //         printData(temp->data);
+    //         temp = temp->next;
+    //     }
+    //     std::cout << "null" << std::endl;
+    // }
+
+    void print(void (T::*printFunc)() const) {
         Node<T>* temp = head;
         while(temp != nullptr) {
-            printData(temp->data);
+            (temp->data.*printFunc)();
             temp = temp->next;
         }
         std::cout << "null" << std::endl;
@@ -80,7 +90,7 @@ private:
     void printData(const T& data) {
         if constexpr (std::is_same<T, Property>::value) {
             // if datatype is property, print specific attribute
-            std::cout << data.getID() << std::endl;
+            std::cout << data.getId() << std::endl;
         } else {
             // else print normally
             std::cout << data << std::endl;

@@ -14,7 +14,8 @@ csv loader made by Marcelino
 #include "linkedlist.h"
 
 class Loader {
-public:
+// utility functions
+private:
     // trim whitespace
     std::string trim(const std::string& str) {
         size_t start = str.find_first_not_of(" \t\n\r");
@@ -68,7 +69,6 @@ public:
         return arr;
     }
 
-public:
     Property loadLine(const std::string& line) {
         Property property;
         std::stringstream ss(line);
@@ -156,8 +156,11 @@ public:
         return property;
     }
 
+
+public: 
     // main loader, saves indirectly to linked list through pointer
-    void loadCSV(const std::string& filename, LinkedList<Property>& list) {
+    // element determine number of lines to parse, -1 for all
+    void loadCSV(const std::string& filename, LinkedList<Property>& list, int elements) {
         std::ifstream file(filename);
         if(!file.is_open()) {
             std::cerr << "Failed to open " << filename << std::endl;
@@ -168,10 +171,13 @@ public:
         std::getline(file, line); // skip header line
 
         int count = 0;
-        while(std::getline(file, line) && count < 25) {
+        while (std::getline(file, line)) {
             Property property = loadLine(line);
             list.append(property);
             count++;
+            if (elements != -1 && count >= elements) {
+                break;
+            }
         }
 
         file.close();
