@@ -1,3 +1,6 @@
+#pragma comment(linker, "/STACK:8000000")
+#pragma comment(linker, "/HEAP:8000000")
+
 #include <iostream>
 #include <chrono> // std::chrono
 #include <thread> // thread control
@@ -14,6 +17,9 @@
 void clearInputBuffer();
 void clearScreen();
 void sleepFor(int ms);
+// utility, debug
+bool hasCycle(Node<Property>* head);
+bool validateList(Node<Property>* head);
 
 int main() {
     LinkedList<Property> properties;
@@ -150,8 +156,8 @@ int main() {
 
         // create copies of loaded linkedlist
         std::cout << "Copying Lists: number of properties = " << properties.size() << std::endl;
-        LinkedList<Property> quicksort_copy(properties);
-        LinkedList<Property> mergesort_copy(properties);
+        LinkedList<Property>* quicksort_copy = new LinkedList<Property>(properties);
+        LinkedList<Property>* mergesort_copy = new LinkedList<Property>(properties);
         std::cout << "Finished Copying Lists" << std::endl;
 
         // initialize timers
@@ -164,9 +170,8 @@ int main() {
         // run quick sort thread
         std::thread quicksort_thread([&]() {
             quicksort_timer.reset();
-            Quick::sort(quicksort_copy, getAttribute);
+            Quick::sort(*quicksort_copy, getAttribute);
             quick_elapsed = quicksort_timer.elapsed();
-            std::cout << "Finished QuickSort in " << quick_elapsed << " seconds.\n" << std::endl;
         });
 
         // quicksort bathrooms breaks at 19389 properties?
@@ -174,20 +179,25 @@ int main() {
         // run merge sort thread
         // std::thread mergesort_thread([&] () {
         //     mergesort_timer.reset();
-        //     Merge::sort(mergesort_copy, getAttribute);
+        //     Merge::sort(*mergesort_copy, getAttribute);
         //     merge_elapsed = mergesort_timer.elapsed();
-        //     std::cout << "Finished MergeSort in " << merge_elapsed << " seconds.\n" << std::endl;
         // });
         
         // wait for both to finish
         quicksort_thread.join();
         // mergesort_thread.join();
 
+        std::cout << "Finished QuickSort in " << quick_elapsed << " seconds" << std::endl;
+        // std::cout << "Finished MergeSort in " << merge_elapsed << " seconds" << std::endl;
+
+        delete quicksort_copy; 
+        // delete mergesort_copy;
+
         choice = 0;
         valid_input = false;
 
         while(!valid_input) {
-            std::cout << "Do you want to sort by another attribute?" << std::endl;
+            std::cout << "\nDo you want to sort by another attribute?" << std::endl;
             std::cout << "1. Yes" << std::endl;
             std::cout << "2. No" << std::endl;
             std::cout << "Entry: ";
@@ -223,4 +233,32 @@ void clearInputBuffer() {
 
 void sleepFor(int ms) {
     std::this_thread::sleep_for(std::chrono::milliseconds(ms));
+}
+
+// check if the linked list contains a cycle
+// I use the Hare-Tortoise algorithm
+bool hasCycle(Node<Property>* head) {
+    Node<Property>* slow = head;
+    Node<Property>* fast = head;
+
+    while (fast && fast->next) {
+        slow = slow->next;
+        fast = fast->next->next;
+
+        if (slow == fast) {
+            std::cout << "list contains a cycle" << std::endl;
+            return true;
+        }
+    }
+    return false;
+}
+
+// validate linked list to ensure there are no cycles
+bool validateList(Node<Property>* head) {
+    if (hasCycle(head)) {
+        std::cout << "list validation failed" << std::endl;
+        return false;
+    }
+    std::cout << "list validated, no cycles detected" << std::endl;
+    return true;
 }

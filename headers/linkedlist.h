@@ -5,6 +5,7 @@
 // node structure
 template <typename T>
 struct Node {
+public:
     T data;
     Node* next;
     
@@ -15,10 +16,10 @@ struct Node {
 template <typename T>
 class LinkedList {
 public:
-    Node<T>* head = nullptr;
+    Node<T>* head;
 
     // default constructor
-    LinkedList() {}
+    LinkedList() { head = NULL; }
 
     // copy constructor
     LinkedList(const LinkedList& other) {
@@ -76,29 +77,6 @@ public:
         while (temp != nullptr) {
             (temp->data.*printFunc)(); // Call specific print function for Property
             temp = temp->next;
-        }
-        std::cout << std::endl;
-    }
-
-    // print a range of Property elements
-    void printRange(int start, int end, void (T::*printFunc)() const) const {
-        if (start > end || start < 0) {
-            std::cerr << "Invalid range!" << std::endl;
-            return;
-        }
-
-        Node<T>* temp = head;
-        int index = 0;
-
-        while (temp != nullptr && index < start) {
-            temp = temp->next;
-            ++index;
-        }
-
-        while (temp != nullptr && index <= end) {
-            (temp->data.*printFunc)(); // Call specific print function for Property
-            temp = temp->next;
-            ++index;
         }
         std::cout << std::endl;
     }

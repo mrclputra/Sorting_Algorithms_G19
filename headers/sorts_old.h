@@ -1,224 +1,145 @@
 #pragma once
 
+#include <iostream>
 #include <functional>
-[[deprecated("This header is deprecated and broken. Use sorts.h instead.")]]
 
 #include "property.h"
 #include "linkedlist.h"
 
-// convert to template? to allow sorting by other attributes
-// also add gui or prints to visualize the sorting process somehow
-template <typename T>
+// my modified linked list quicksort based on 
+// https://www.geeksforgeeks.org/quicksort-on-singly-linked-list/
 class Quick {
 public:
-	static void sort(LinkedList<Property>& list, int (Property::*getter)() const) {
-        if (list.size() <= 1) {
-            return; // if list is alread sorted
+    static void sort(LinkedList<Property>& list, int (Property::*getAttribute)() const) {
+        if (list.head != nullptr) {
+            list.head = quicksort(list.head, getTail(list.head), getAttribute);
         }
-
-        list.head = quicksort(list.head, list.tail, getter);
-        
-        // update tail pointer
-        Node<Property>* tail = list.head;
-        while (tail->next) {
-            tail = tail->next;
-        }
-        list.tail = tail;
     }
 
 private:
-	static Node<Property>* quicksort(Node<Property>* head, Node<Property>* tail, int (Property::*getter)() const) {
-        if (!head || head == tail) {
-            return head;
+    static Node<Property>* getTail(Node<Property>* curr) {
+        while (curr != nullptr && curr->next != nullptr) {
+            curr = curr->next;
         }
-
-        Node<Property>* newHead = nullptr;
-        Node<Property>* newTail = nullptr;
-
-        Node<Property>* pivot = partition(head, tail, getter, &newHead, &newTail);
-
-        if (newHead != pivot) {
-            Node<Property>* temp = newHead;
-            while (temp->next != pivot) {
-                temp = temp->next;
-            }
-            temp->next = nullptr;
-
-            newHead = quicksort(newHead, temp, getter);
-
-            temp = newHead;
-            while (temp->next) {
-                temp = temp->next;
-            }
-            temp->next = pivot;
-        }
-
-        pivot->next = quicksort(pivot->next, newTail, getter);
-
-        return newHead;
+        return curr;
     }
 
-	// lmao
-	static Node<Property>* partition(Node<Property>* head, Node<Property>* tail, int (Property::*getter)() const,
-                                     Node<Property>** newHead, Node<Property>** newTail) {
-        Node<Property>* pivot = tail;
-        Node<Property>* prev = nullptr;
-        Node<Property>* cur = head;
-        Node<Property>* end = pivot;
+    static Node<Property>* partition(Node<Property>* head, Node<Property>* end, Node<Property>** new_head, Node<Property>** new_end, int (Property::*getAttribute)() const) {
+        if (!head || !end || !new_head || !new_end) {
+            std::cerr << "Error: Null pointer encountered in partition function" << std::endl;
+            return nullptr;
+        }
 
-        while (cur != pivot) {
-            if ((cur->data.*getter)() < (pivot->data.*getter)()) {
-                if (!*newHead) {
-                    *newHead = cur;
+        Node<Property>* pivot = end;
+        Node<Property>* prev = nullptr, *curr = head, *tail = pivot;
+
+        while (curr != pivot) {
+            if ((curr->data.*getAttribute)() < (pivot->data.*getAttribute)()) {
+                if ((*new_head) == nullptr) {
+                    (*new_head) = curr;
                 }
-                prev = cur;
-                cur = cur->next;
+                prev = curr;
+                curr = curr->next;
             } else {
                 if (prev) {
-                    prev->next = cur->next;
+                    prev->next = curr->next;
                 }
-                Node<Property>* temp = cur->next;
-                cur->next = nullptr;
-                end->next = cur;
-                end = cur;
-                cur = temp;
+                Node<Property>* tmp = curr->next;
+                curr->next = nullptr;
+                tail->next = curr;
+                tail = curr;
+                curr = tmp;
             }
         }
 
-        if (!*newHead) {
-            *newHead = pivot;
+        if (*new_head == nullptr) {
+            *new_head = pivot;
         }
 
-        *newTail = end;
+        *new_end = tail;
 
         return pivot;
     }
+
+    static Node<Property>* quicksort(Node<Property>* head, Node<Property>* end, int (Property::*getAttribute)() const) {
+        if (!head || head == end) {
+            return head;
+        }
+
+        Node<Property>* new_head = nullptr;
+        Node<Property>* new_end = nullptr;
+
+        Node<Property>* pivot = partition(head, end, &new_head, &new_end, getAttribute);
+
+        if (new_head != pivot) {
+            Node<Property>* tmp = new_head;
+            while (tmp->next != pivot) {
+                tmp = tmp->next;
+            }
+            tmp->next = nullptr;
+
+            new_head = quicksort(new_head, tmp, getAttribute);
+
+            tmp = getTail(new_head);
+            tmp->next = pivot;
+        }
+
+        pivot->next = quicksort(pivot->next, new_end, getAttribute);
+
+        return new_head;
+    }
 };
-
-// class Quick {
-// public:
-// 	// recursive
-// 	static void sort(Property* arr, int low, int high) {
-// 		if (low < high) {
-// 			int pivot_index = partition(arr, low, high);
-// 			sort(arr, low, pivot_index - 1);
-// 			sort(arr, pivot_index + 1, high);
-// 		}
-// 	}
-
-// private:
-// 	static int partition(Property* arr, int low, int high) {
-// 		Property pivot = arr[high];		// last element as pivot
-// 		int i = low - 1;				// index of smaller element
-
-// 		// what the fuck
-// 		for (int j = low; j < high; j++) {
-// 			if (arr[j].getId() < pivot.getId()) {
-// 				i++;
-// 				std::swap(arr[i], arr[j]);
-// 			}
-// 		}
-// 		std::swap(arr[i + 1], arr[high]);
-// 		return i + 1;
-// 	}
-
-// };
 
 class Merge {
 public:
-    static void sort(Property* arr, int size) {
-        mergeSort(arr, 0, size - 1);
+    static void sort(LinkedList<Property>& list, int (Property::*getAttribute)() const) {
+        list.head = mergeSort(list.head, getAttribute);
     }
 
 private:
-    // merge 
-    static void mergeSort(Property* arr, int low, int high) {
-        if (low < high) {
-            int mid = low + (high - low) / 2;  // create middle index
+    static Node<Property>* mergeSort(Node<Property>* head, int (Property::*getAttribute)() const) {
+        if (!head || !head->next) return head;
 
-            //sort the two halves
-            mergeSort(arr, low, mid);
-            mergeSort(arr, mid + 1, high);
+        Node<Property>* middle = getMiddle(head);
+        Node<Property>* nextOfMiddle = middle->next;
 
-            // merge the sorted halves
-            merge(arr, low, mid, high);
-        }
+        middle->next = nullptr; // Split the list into two halves
+
+        Node<Property>* left = mergeSort(head, getAttribute);
+        Node<Property>* right = mergeSort(nextOfMiddle, getAttribute);
+
+        return merge(left, right, getAttribute);
     }
 
-    // merge two halves of array
-    static void merge(Property* arr, int low, int mid, int high) {
-        int leftSize = mid - low + 1;
-        int rightSize = high - mid;
+    static Node<Property>* getMiddle(Node<Property>* head) {
+        if (!head) return head;
 
-        // Temp arrays
-        Property left[leftSize], right[rightSize];
-        
-        // copy data to temp arrays
-        for (int i = 0; i < leftSize; ++i)
-            left[i] = arr[low + i];
-        for (int j = 0; j < rightSize; ++j)
-            right[j] = arr[mid + 1 + j];
+        Node<Property>* slow = head;
+        Node<Property>* fast = head->next;
 
-        // merge the temporary arrays back into arr[low..high]
-        int i = 0;     // initial index of left subarray
-        int j = 0;     // initial index of right subarray
-        int k = low;   // initial index of merged subarray
-
-        while (i < leftSize && j < rightSize) {
-            if (left[i].getId() <= right[j].getId()) {
-                arr[k++] = left[i++];
-            } else {
-                arr[k++] = right[j++];
-            }
+        // Move fast by 2 and slow by 1
+        while (fast != nullptr && fast->next != nullptr) {
+            slow = slow->next;
+            fast = fast->next->next;
         }
 
-        // copy remaining elements of left[] if any
-        while (i < leftSize) {
-            arr[k++] = left[i++];
+        return slow;
+    }
+
+    static Node<Property>* merge(Node<Property>* left, Node<Property>* right, int (Property::*getAttribute)() const) {
+        if (!left) return right;
+        if (!right) return left;
+
+        Node<Property>* result = nullptr;
+
+        if ((left->data.*getAttribute)() <= (right->data.*getAttribute)()) {
+            result = left;
+            result->next = merge(left->next, right, getAttribute);
+        } else {
+            result = right;
+            result->next = merge(left, right->next, getAttribute);
         }
 
-        // copy remaining elements of right[] if any
-        while (j < rightSize) {
-            arr[k++] = right[j++];
-        }
+        return result;
     }
 };
-
-// replace with merge sort soon
-// class Heap {
-// public:
-// 	static void sort(Property* arr, int size) {
-// 		for (int i = size / 2 - 1; i >= 0; i--) {
-// 			heapify(arr, size, i);
-// 		}
-
-// 		// extract element one by one from heap
-// 		for (int i = size - 1; i > 0; i--) {
-// 			std::swap(arr[0], arr[i]);
-// 			heapify(arr, i, 0);
-// 		}
-// 	}
-
-// private:
-// 	static void heapify(Property* arr, int size, int i) {
-// 		int largest = i;
-// 		int l = 2 * i + 1;	// left
-// 		int r = 2 * i + 2;	// right
-
-// 		if (l < size && arr[l].getId() > arr[largest].getId()) {
-// 			largest = l;
-// 		}
-
-// 		if (r < size && arr[r].getId() > arr[largest].getId()) {
-// 			largest = r;
-// 		}
-
-// 		if (largest != i) {
-// 			std::swap(arr[i], arr[largest]);
-// 			heapify(arr, size, largest);
-// 		}
-// 	}
-
-// };
-
-// implement a new class sort below

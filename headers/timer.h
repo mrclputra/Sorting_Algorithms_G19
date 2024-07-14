@@ -7,21 +7,15 @@
 
 class Timer {
 public:
-    // set start time on instance creation
-    Timer() : start_time_(std::chrono::high_resolution_clock::now()) {}
-
-    // reset start time to current time
-    void reset() {
-        start_time_ = std::chrono::high_resolution_clock::now();
-    }
-
+    Timer() { reset(); }
+    void reset() { start_time = std::chrono::high_resolution_clock::now(); }
     double elapsed() const {
-        std::chrono::duration<double> elapsed_time = std::chrono::high_resolution_clock::now() - start_time_;
-        return elapsed_time.count();
+        auto end_time = std::chrono::high_resolution_clock::now();
+        std::chrono::duration<double> diff = end_time - start_time;
+        return diff.count();
     }
-
 private:
-    std::chrono::time_point<std::chrono::high_resolution_clock> start_time_;
+    std::chrono::time_point<std::chrono::high_resolution_clock> start_time;
 };
 
 #endif // EXECUTION_TIMER_H
