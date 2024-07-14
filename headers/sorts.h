@@ -5,14 +5,21 @@
 #include "property.h"
 
 // my modified linked list quicksort based on 
-// recursive approach
+// https://www.geeksforgeeks.org/quicksort-on-singly-linked-list/
 class Quick {
 public:
     static void sort(LinkedList<Property>& list, int (Property::*getAttribute)() const) {
+        recursion_depth = 0;
+        max_recursion_depth = 0;
         list.head = recursive(list.head, getTail(list.head), getAttribute);
+        std::cout << "Maximum Quicksort Recursion Depth: " << max_recursion_depth << std::endl;
     }
 
 private:
+    // track space complexity
+    static inline int recursion_depth = 0;
+    static inline int max_recursion_depth = 0;
+
     static Node<Property>* getTail(Node<Property>* curr) {
         while (curr != nullptr && curr->next != nullptr)
             curr = curr->next;
@@ -27,7 +34,7 @@ private:
         Node<Property>* curr = head;
         Node<Property>* tail = pivot;
 
-        // Partition the list
+        // partition the list
         while (curr != pivot) {
             if ((curr->data.*getAttribute)() < (pivot->data.*getAttribute)()) {
                 if ((*new_head) == nullptr)
@@ -56,8 +63,13 @@ private:
     }
 
     static Node<Property>* recursive(Node<Property>* head, Node<Property>* end, int (Property::*getAttribute)() const) {
+        // base condition
         if (!head || head == end)
             return head;
+
+        // increment recursion depth
+        recursion_depth++;
+        max_recursion_depth = std::max(max_recursion_depth, recursion_depth); // update max
 
         Node<Property>* new_head = nullptr;
         Node<Property>* new_end = nullptr;
@@ -79,12 +91,89 @@ private:
         }
 
         pivot->next = recursive(pivot->next, new_end, getAttribute);
+        recursion_depth--;
 
         return new_head;
     }
 };
 
-// iterative approach
+// recursive approach
+class Merge {
+public:
+    static void sort(LinkedList<Property>& list, int (Property::*getAttribute)() const) {
+        recursion_depth = 0;
+        max_recursion_depth = 0;
+        list.head = recursive(list.head, getAttribute);
+        std::cout << "Maximum Mergesort Recursion Depth: " << max_recursion_depth << std::endl;
+    }
+
+private:
+    static inline int recursion_depth = 0;
+    static inline int max_recursion_depth = 0;
+
+    static Node<Property>* recursive(Node<Property>* head, int (Property::*getAttribute)() const) {
+        if (!head || !head->next)
+            return head;
+
+        recursion_depth++;
+        max_recursion_depth = std::max(max_recursion_depth, recursion_depth);
+
+        Node<Property>* first = nullptr;
+        Node<Property>* second = nullptr;
+
+        splitList(head, &first, &second);
+
+        first = recursive(first, getAttribute);
+        second = recursive(second, getAttribute);
+
+        Node<Property>* result = sortedMerge(first, second, getAttribute);
+
+        recursion_depth--;
+
+        return result;
+    }
+
+    static Node<Property>* sortedMerge(Node<Property>* first, Node<Property>* second, int (Property::*getAttribute)() const) {
+        if (!first)
+            return second;
+        if (!second)
+            return first;
+
+        Node<Property>* result = nullptr;
+
+        if ((first->data.*getAttribute)() <= (second->data.*getAttribute)()) {
+            result = first;
+            result->next = sortedMerge(first->next, second, getAttribute);
+        } else {
+            result = second;
+            result->next = sortedMerge(first, second->next, getAttribute);
+        }
+
+        return result;
+    }
+
+    static void splitList(Node<Property>* source, Node<Property>** first_ref, Node<Property>** second_ref) {
+        Node<Property>* slow = source;
+        Node<Property>* fast = source->next;
+
+        while (fast) {
+            fast = fast->next;
+            if (fast) {
+                slow = slow->next;
+                fast = fast->next;
+            }
+        }
+
+        *first_ref = source;
+        *second_ref = slow->next;
+        slow->next = nullptr;
+    }
+};
+
+/*
+iterative approaches below
+*/
+
 // class Quick {
 // public:
 //     static void sort(LinkedList<Property>& list, int (Property::*getAttribute)() const) {
@@ -168,129 +257,77 @@ private:
 //     }
 // };
 
-// iterative approach
-class Merge {
-public:
-    static void sort(LinkedList<Property>& list, int (Property::*getAttribute)() const) {
-        if (list.head == nullptr || list.head->next == nullptr) {
-            // List is empty or has a single element; already sorted
-            return;
-        }
-
-        // Step 1: Get the length of the linked list
-        int length = getLength(list.head);
-
-        // Step 2: Iteratively merge sublists of increasing size
-        Node<Property>* head = list.head;
-        Node<Property>* new_head = nullptr;
-
-        for (int size = 1; size < length; size *= 2) {
-            Node<Property>* current = head;
-            Node<Property>* tail = nullptr;
-
-            // Merge sublists of size 'size'
-            while (current != nullptr) {
-                Node<Property>* left = current;
-                Node<Property>* right = splitList(left, size);
-                current = splitList(right, size);
-
-                // Merge the two sublists and update the tail
-                Node<Property>* merged = sortedMerge(left, right, getAttribute);
-                if (new_head == nullptr) {
-                    new_head = merged;
-                }
-                if (tail != nullptr) {
-                    tail->next = merged;
-                }
-                tail = getTail(merged);
-            }
-            list.head = new_head;
-        }
-    }
-
-private:
-    static int getLength(Node<Property>* head) {
-        int length = 0;
-        Node<Property>* current = head;
-        while (current != nullptr) {
-            length++;
-            current = current->next;
-        }
-        return length;
-    }
-
-    static Node<Property>* splitList(Node<Property>* head, int size) {
-        if (head == nullptr) return nullptr;
-
-        Node<Property>* current = head;
-        Node<Property>* prev = nullptr;
-
-        for (int i = 0; i < size && current != nullptr; i++) {
-            prev = current;
-            current = current->next;
-        }
-
-        if (prev != nullptr) {
-            prev->next = nullptr;
-        }
-
-        return current;
-    }
-
-    static Node<Property>* sortedMerge(Node<Property>* first, Node<Property>* second, int (Property::*getAttribute)() const) {
-        if (!first) return second;
-        if (!second) return first;
-
-        Node<Property>* result = nullptr;
-
-        if ((first->data.*getAttribute)() <= (second->data.*getAttribute)()) {
-            result = first;
-            result->next = sortedMerge(first->next, second, getAttribute);
-        } else {
-            result = second;
-            result->next = sortedMerge(first, second->next, getAttribute);
-        }
-
-        return result;
-    }
-
-    static Node<Property>* getTail(Node<Property>* head) {
-        Node<Property>* tail = head;
-        while (tail != nullptr && tail->next != nullptr) {
-            tail = tail->next;
-        }
-        return tail;
-    }
-};
-
-// // recursive approach
 // class Merge {
 // public:
 //     static void sort(LinkedList<Property>& list, int (Property::*getAttribute)() const) {
-//         list.head = recursive(list.head, getAttribute);
+//         if (list.head == nullptr || list.head->next == nullptr) {
+//             // List is empty or has a single element; already sorted
+//             return;
+//         }
+
+//         // Step 1: Get the length of the linked list
+//         int length = getLength(list.head);
+
+//         // Step 2: Iteratively merge sublists of increasing size
+//         Node<Property>* head = list.head;
+//         Node<Property>* new_head = nullptr;
+
+//         for (int size = 1; size < length; size *= 2) {
+//             Node<Property>* current = head;
+//             Node<Property>* tail = nullptr;
+
+//             // Merge sublists of size 'size'
+//             while (current != nullptr) {
+//                 Node<Property>* left = current;
+//                 Node<Property>* right = splitList(left, size);
+//                 current = splitList(right, size);
+
+//                 // Merge the two sublists and update the tail
+//                 Node<Property>* merged = sortedMerge(left, right, getAttribute);
+//                 if (new_head == nullptr) {
+//                     new_head = merged;
+//                 }
+//                 if (tail != nullptr) {
+//                     tail->next = merged;
+//                 }
+//                 tail = getTail(merged);
+//             }
+//             list.head = new_head;
+//         }
 //     }
 
 // private:
-//     static Node<Property>* recursive(Node<Property>* head, int (Property::*getAttribute)() const) {
-//         if (!head || !head->next)
-//             return head;
+//     static int getLength(Node<Property>* head) {
+//         int length = 0;
+//         Node<Property>* current = head;
+//         while (current != nullptr) {
+//             length++;
+//             current = current->next;
+//         }
+//         return length;
+//     }
 
-//         Node<Property>* first = nullptr;
-//         Node<Property>* second = nullptr;
+//     static Node<Property>* splitList(Node<Property>* head, int size) {
+//         if (head == nullptr) return nullptr;
 
-//         splitList(head, &first, &second);
+//         Node<Property>* current = head;
+//         Node<Property>* prev = nullptr;
 
-//         first = recursive(first, getAttribute);
-//         second = recursive(second, getAttribute);
+//         for (int i = 0; i < size && current != nullptr; i++) {
+//             prev = current;
+//             current = current->next;
+//         }
 
-//         return sortedMerge(first, second, getAttribute);
+//         if (prev != nullptr) {
+//             prev->next = nullptr;
+//         }
+
+//         return current;
 //     }
 
 //     static Node<Property>* sortedMerge(Node<Property>* first, Node<Property>* second, int (Property::*getAttribute)() const) {
-//         if (!first)
-//             return second;
-//         if (!second)
-//             return first;
+//         if (!first) return second;
+//         if (!second) return first;
 
 //         Node<Property>* result = nullptr;
 
@@ -305,20 +342,11 @@ private:
 //         return result;
 //     }
 
-//     static void splitList(Node<Property>* source, Node<Property>** first_ref, Node<Property>** second_ref) {
-//         Node<Property>* slow = source;
-//         Node<Property>* fast = source->next;
-
-//         while (fast) {
-//             fast = fast->next;
-//             if (fast) {
-//                 slow = slow->next;
-//                 fast = fast->next;
-//             }
+//     static Node<Property>* getTail(Node<Property>* head) {
+//         Node<Property>* tail = head;
+//         while (tail != nullptr && tail->next != nullptr) {
+//             tail = tail->next;
 //         }
-
-//         *first_ref = source;
-//         *second_ref = slow->next;
-//         slow->next = nullptr;
+//         return tail;
 //     }
 // };

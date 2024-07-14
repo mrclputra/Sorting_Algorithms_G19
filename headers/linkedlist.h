@@ -37,6 +37,7 @@ public:
     }
 
     // destructor
+    // automatically deletes linked list when going out of scope
     ~LinkedList() {
         clear();
     }

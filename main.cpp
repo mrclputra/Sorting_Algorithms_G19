@@ -1,6 +1,3 @@
-#pragma comment(linker, "/STACK:8000000")
-#pragma comment(linker, "/HEAP:8000000")
-
 #include <iostream>
 #include <chrono> // std::chrono
 #include <thread> // thread control
@@ -12,6 +9,9 @@
 #include "headers/linkedlist.h"
 #include "headers/sorts.h"
 #include "headers/timer.h"
+
+// prevent stack overflow
+#define MAX_ELEMENTS 18000
 
 // function prototypes
 void clearInputBuffer();
@@ -58,20 +58,23 @@ int main() {
     if (choice == 1) {
         std::cout << "Loading all entries from " << filename << std::endl;
         sleepFor(1000);
-        Loader::loadCSV(filename, properties, -1);
+        Loader::loadCSV(filename, properties, MAX_ELEMENTS);
 
     } else if (choice == 2) {
         int num_lines;
-        while(true) {
-            std::cout << "Enter number of lines to load : ";
+        while (true) {
+            std::cout << "Enter number of lines to load: ";
             std::cin >> num_lines;
 
-            if(std::cin.fail() || num_lines < 1) {
+            if (std::cin.fail() || num_lines < 1) {
                 clearInputBuffer();
                 std::cout << "Invalid Input, enter a positive Integer" << std::endl;
                 sleepFor(1000);
                 clearScreen();
             } else {
+                if (num_lines > MAX_ELEMENTS) {
+                    num_lines = MAX_ELEMENTS;
+                }
                 std::cout << "Loading " << num_lines << " entries from " << filename << std::endl;
                 sleepFor(1000);
                 Loader::loadCSV(filename, properties, num_lines);
@@ -156,14 +159,13 @@ int main() {
 
         // create copies of loaded linkedlist
         std::cout << "Copying Lists: number of properties = " << properties.size() << std::endl;
-        LinkedList<Property>* quicksort_copy = new LinkedList<Property>(properties);
+        LinkedList<Property>* quicksort_copy = new LinkedList<Property>(properties); // allocate on heap
         LinkedList<Property>* mergesort_copy = new LinkedList<Property>(properties);
         std::cout << "Finished Copying Lists" << std::endl;
 
         // initialize timers
         Timer quicksort_timer;
         Timer mergesort_timer;
-
         double quick_elapsed = 0.0;
         double merge_elapsed = 0.0;
 
@@ -177,21 +179,21 @@ int main() {
         // quicksort bathrooms breaks at 19389 properties?
 
         // run merge sort thread
-        // std::thread mergesort_thread([&] () {
-        //     mergesort_timer.reset();
-        //     Merge::sort(*mergesort_copy, getAttribute);
-        //     merge_elapsed = mergesort_timer.elapsed();
-        // });
+        std::thread mergesort_thread([&] () {
+            mergesort_timer.reset();
+            Merge::sort(*mergesort_copy, getAttribute);
+            merge_elapsed = mergesort_timer.elapsed();
+        });
         
         // wait for both to finish
         quicksort_thread.join();
-        // mergesort_thread.join();
+        mergesort_thread.join();
 
         std::cout << "Finished QuickSort in " << quick_elapsed << " seconds" << std::endl;
-        // std::cout << "Finished MergeSort in " << merge_elapsed << " seconds" << std::endl;
+        std::cout << "Finished MergeSort in " << merge_elapsed << " seconds" << std::endl;
 
         delete quicksort_copy; 
-        // delete mergesort_copy;
+        delete mergesort_copy;
 
         choice = 0;
         valid_input = false;
@@ -235,8 +237,8 @@ void sleepFor(int ms) {
     std::this_thread::sleep_for(std::chrono::milliseconds(ms));
 }
 
-// check if the linked list contains a cycle
-// I use the Hare-Tortoise algorithm
+// check if the linked list contains a cycle, debug
+// Hare-Tortoise algorithm
 bool hasCycle(Node<Property>* head) {
     Node<Property>* slow = head;
     Node<Property>* fast = head;
