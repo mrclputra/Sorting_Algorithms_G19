@@ -153,12 +153,13 @@ int main() {
                 printAttribute = &Property::printSize;
                 break;
             default:
+                // should not happen
                 std::cout << "error unknown sort criteria" << std::endl;
                 break;
         }
 
         // create copies of loaded linkedlist
-        std::cout << "Copying Lists: number of properties = " << properties.size() << std::endl;
+        std::cout << "Copying Lists..." << std::endl;
         LinkedList<Property>* quicksort_copy = new LinkedList<Property>(properties); // allocate on heap
         LinkedList<Property>* mergesort_copy = new LinkedList<Property>(properties);
         std::cout << "Finished Copying Lists" << std::endl;
@@ -176,8 +177,6 @@ int main() {
             quick_elapsed = quicksort_timer.elapsed();
         });
 
-        // quicksort bathrooms breaks at 19389 properties?
-
         // run merge sort thread
         std::thread mergesort_thread([&] () {
             mergesort_timer.reset();
@@ -189,8 +188,8 @@ int main() {
         quicksort_thread.join();
         mergesort_thread.join();
 
-        std::cout << "Finished QuickSort in " << quick_elapsed << " seconds" << std::endl;
         std::cout << "Finished MergeSort in " << merge_elapsed << " seconds" << std::endl;
+        std::cout << "Finished QuickSort in " << quick_elapsed << " seconds" << std::endl;
 
         delete quicksort_copy; 
         delete mergesort_copy;
