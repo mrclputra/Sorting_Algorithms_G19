@@ -178,7 +178,7 @@ int main() {
         });
 
         // run merge sort thread
-        std::thread mergesort_thread([&] () {
+        std::thread mergesort_thread([&]() {
             mergesort_timer.reset();
             Merge::sort(*mergesort_copy, getAttribute);
             merge_elapsed = mergesort_timer.elapsed();

@@ -114,12 +114,12 @@ private:
 
         head = new Node<T>(other.head->data);
         Node<T>* current = head;
-        Node<T>* otherCurrent = other.head->next;
+        Node<T>* other_current = other.head->next;
 
-        while (otherCurrent) {
-            current->next = new Node<T>(otherCurrent->data);
+        while (other_current) {
+            current->next = new Node<T>(other_current->data);
             current = current->next;
-            otherCurrent = otherCurrent->next;
+            other_current = other_current->next;
         }
     }
 };
